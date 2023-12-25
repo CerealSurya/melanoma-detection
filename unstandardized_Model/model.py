@@ -19,7 +19,7 @@ train_dataset = tf.keras.utils.image_dataset_from_directory(train_dir, shuffle=T
 preprocess_input = tf.keras.applications.inception_v3.preprocess_input
 
 
-base_model = tf.keras.applications.inception_v3(input_shape= IMG_SIZE + (3,), include_top=False, weights='imagenet')
+base_model = tf.keras.applications.inception_v3.InceptionV3(input_shape= IMG_SIZE + (3,), include_top=False, weights='imagenet')
 base_model.trainable = False
 
 #https://www.tensorflow.org/tutorials/images/transfer_learning
