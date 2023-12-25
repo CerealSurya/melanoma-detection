@@ -55,9 +55,5 @@ model.compile(
 )
 path = 'data/testing'
 
-# model.fit(x,y,
-#     batch_size= 2,
-#     epochs= 30,
-#     validation_split=0.3
-# )
+model.fit(train_dataset, epochs=10, validation_data=validation_dataset)
 model.save('machine/')
