@@ -47,7 +47,7 @@ x = tf.keras.layers.Dropout(0.2)(x)
 outputs = prediction_layer(x) #Get our outputs from the fully connected layer we defined above
 
 model = tf.keras.Model(inputs, outputs)
-
+print(model.summary())
 model.compile(
     loss= 'binary_crossentropy',
     optimizer= 'adam',
@@ -55,5 +55,5 @@ model.compile(
 )
 path = 'data/testing'
 
-model.fit(train_dataset, epochs=10) #, validation_data=validation_dataset
+model.fit(train_dataset, epochs=10, batch_size=16) #, validation_data=validation_dataset
 model.save('machine/')
