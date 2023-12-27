@@ -9,8 +9,10 @@ from tensorflow.python.keras.optimizer_v2.rmsprop import RMSprop
 
 #https://pythonprogramming.net/convolutional-neural-network-deep-learning-python-tensorflow-keras/?completed=/loading-custom-data-deep-learning-python-tensorflow-keras/
 # ^^^ Use that to understand everything
+# gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=0.8)
+# session = tf.Session(config=tf.ConfigProto(gpu_options=gpu_options))
 
-BATCH_SIZE = 32
+BATCH_SIZE = 16
 IMG_SIZE = (299, 299)
 train_dir = "initialDataset"
 validation_dir = "initialDataset/validation"
@@ -55,5 +57,5 @@ model.compile(
 )
 path = 'data/testing'
 
-model.fit(train_dataset, epochs=10, batch_size=16) #, validation_data=validation_dataset
+model.fit(train_dataset, epochs=10) #, validation_data=validation_dataset
 model.save('machine/')
