@@ -6,6 +6,8 @@ from tensorflow.keras import optimizers
 from tensorflow.keras.preprocessing import image
 from tensorflow.keras.preprocessing.image import ImageDataGenerator 
 from tensorflow.python.keras.optimizer_v2.rmsprop import RMSprop 
+from keras.callbacks import CSVLogger
+
 
 #https://pythonprogramming.net/convolutional-neural-network-deep-learning-python-tensorflow-keras/?completed=/loading-custom-data-deep-learning-python-tensorflow-keras/
 # ^^^ Use that to understand everything
@@ -50,12 +52,10 @@ outputs = prediction_layer(x) #Get our outputs from the fully connected layer we
 
 model = tf.keras.Model(inputs, outputs)
 print(model.summary())
-model.compile(
-    loss= 'binary_crossentropy',
-    optimizer= 'adam',
-    metrics=['accuracy']
-)
+base_learning_rate = 0.0001
+model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=base_learning_rate),loss=tf.keras.losses.BinaryCrossentropy(from_logits=True), metrics=[tf.keras.metrics.BinaryAccuracy(threshold=0, name='accuracy')])
 path = 'data/testing'
 
-model.fit(train_dataset, epochs=10) #, validation_data=validation_dataset
+csv_logger = CSVLogger('log.csv', append=True, separator=';')
+model.fit(train_dataset, epochs=2, callbacks=[csv_logger]) #, validation_data=validation_dataset
 model.save('machine/')
