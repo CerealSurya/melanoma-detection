@@ -57,5 +57,5 @@ model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=base_learning_rat
 path = 'data/testing'
 
 csv_logger = CSVLogger('log.csv', append=True, separator=';')
-model.fit(train_dataset, epochs=1, callbacks=[csv_logger]) #, validation_data=validation_dataset
+model.fit(train_dataset, epochs=2, callbacks=[csv_logger]) #, validation_data=validation_dataset
 model.save('machine.keras')
