@@ -14,7 +14,7 @@ from keras.callbacks import CSVLogger
 # gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=0.8)
 # session = tf.Session(config=tf.ConfigProto(gpu_options=gpu_options))
 
-BATCH_SIZE = 16
+BATCH_SIZE = 8
 IMG_SIZE = (299, 299)
 train_dir = "initialDataset"
 validation_dir = "initialDataset/validation"
