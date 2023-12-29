@@ -7,6 +7,14 @@ from tensorflow.keras.preprocessing import image
 from tensorflow.keras.preprocessing.image import ImageDataGenerator 
 from tensorflow.python.keras.optimizer_v2.rmsprop import RMSprop 
 
+"""" Use this for importing singular img
+from PIL import Image
+img_data = np.random.random(size=(299, 299, 3))
+img = tf.keras.utils.array_to_img(img_data)
+array = tf.keras.utils.image.img_to_array(img)
+model.predict(array)
+"""
+
 #TODO: Load keras model, load validation dataset(dermnet) --> reformat it all to fit inception, run evaluate on everything, log accuracy
 model = tf.keras.models.load_model('machine.keras')
 print(model.summary())
@@ -14,10 +22,11 @@ preprocess_input = tf.keras.applications.inception_v3.preprocess_input
 validation_dataset = tf.keras.utils.image_dataset_from_directory("initialDataset/validation", shuffle=False, batch_size=8, image_size=(299, 299))
 
 processedImg = []
+labelsList = []
 for images, labels in validation_dataset.take(1):  # only take first element of dataset
-    print(len(images), images)
+    #print(len(images), images)
+    labelsList.append(labels)
     processedImg.append(preprocess_input(images.numpy()))
-    print("Howdy", preprocess_input(images.numpy()))
 
 #processedImg = np.array(processedImg) #Convert python list into numpy array
 
@@ -26,7 +35,7 @@ print(len(predictions))
 for yPrediction in predictions:
     print(yPrediction)
 
-fpr_keras, tpr_keras, thresholds_keras = roc_curve([0,1], predictions)
+fpr_keras, tpr_keras, thresholds_keras = roc_curve(labelsList, predictions)
 auc_keras = auc(fpr_keras, tpr_keras)
 
 plt.figure(1)
