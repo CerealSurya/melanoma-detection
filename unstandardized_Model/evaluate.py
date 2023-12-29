@@ -24,16 +24,14 @@ validation_dataset = tf.keras.utils.image_dataset_from_directory("initialDataset
 processedImg = []
 labelsList = []
 for images, labels in validation_dataset.take(1):  # only take first element of dataset
-    #print(len(images), images)
+    print("Label: ", labels)
     labelsList.append(labels)
     processedImg.append(preprocess_input(images.numpy()))
 
 #processedImg = np.array(processedImg) #Convert python list into numpy array
 
 predictions = model.predict(validation_dataset)
-print(len(predictions))
-for yPrediction in predictions:
-    print(yPrediction)
+print("Total Predictions: ", len(predictions))
 
 fpr_keras, tpr_keras, thresholds_keras = roc_curve(labelsList, predictions)
 auc_keras = auc(fpr_keras, tpr_keras)
