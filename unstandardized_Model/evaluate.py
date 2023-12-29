@@ -11,7 +11,7 @@ from tensorflow.python.keras.optimizer_v2.rmsprop import RMSprop
 model = tf.keras.models.load_model('machine.keras')
 print(model.summary())
 preprocess_input = tf.keras.applications.inception_v3.preprocess_input
-validation_dataset = tf.keras.utils.image_dataset_from_directory("initialDataset/validation", shuffle=False, batch_size=None, image_size=(299, 299))
+validation_dataset = tf.keras.utils.image_dataset_from_directory("initialDataset/validation", shuffle=False, batch_size=8, image_size=(299, 299))
 
 processedImg = []
 for images, labels in validation_dataset.take(1):  # only take first element of dataset
