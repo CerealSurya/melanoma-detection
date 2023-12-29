@@ -14,7 +14,8 @@ preprocess_input = tf.keras.applications.inception_v3.preprocess_input
 validation_dataset = tf.keras.utils.image_dataset_from_directory("initialDataset/validation", shuffle=False, batch_size=None, image_size=(299, 299))
 
 processedImg = []
-for images in validation_dataset.take(1):  # only take first element of dataset
+for images, labels in validation_dataset.take(1):  # only take first element of dataset
+    print(len(images))
     processedImg.append(preprocess_input(images.numpy()))
 
 #processedImg = np.array(processedImg) #Convert python list into numpy array
