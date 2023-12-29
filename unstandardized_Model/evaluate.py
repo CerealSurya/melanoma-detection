@@ -40,24 +40,14 @@ auc_keras = auc(fpr_keras, tpr_keras)
 print(fpr_keras, "\nbreak\n")
 print(tpr_keras, "\nbreak\n")
 print(thresholds_keras, "\nbreak\n")
-print(auc_keras, "\nbreak\n")
+print("AUC: ", auc_keras, "\nbreak\n")
 
-# plt.figure(1)
-# plt.plot([0, 1], [0, 1], 'k--')
-# plt.plot(fpr_keras, tpr_keras, label='Keras (area = {:.3f})'.format(auc_keras))
-# plt.xlabel('False positive rate')
-# plt.ylabel('True positive rate')
-# plt.title('ROC curve')
-# plt.legend(loc='best')
-# plt.show()
-# # Zoom in view of the upper left corner.
-# plt.figure(2)
-# plt.xlim(0, 0.2)
-# plt.ylim(0.8, 1)
-# plt.plot([0, 1], [0, 1], 'k--')
-# plt.plot(fpr_keras, tpr_keras, label='Keras (area = {:.3f})'.format(auc_keras))
-# plt.xlabel('False positive rate')
-# plt.ylabel('True positive rate')
-# plt.title('ROC curve (zoomed in at top left)')
-# plt.legend(loc='best')
-# plt.show()
+with open("fpr.txt", "w") as f:
+    for i in fpr_keras:
+        f.write(str(i) + "\n")
+with open("tpr.txt", "w") as f:
+    for i in tpr_keras:
+        f.write(str(i) + "\n")
+with open("thresholds.txt", "w") as f:
+    for i in thresholds_keras:
+        f.write(str(i) + "\n")      
