@@ -53,7 +53,7 @@ outputs = prediction_layer(x) #Get our outputs from the fully connected layer we
 model = tf.keras.Model(inputs, outputs)
 print(model.summary())
 base_learning_rate = 0.0001
-model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=base_learning_rate),loss=tf.keras.losses.BinaryCrossentropy(from_logits=True), metrics=[tf.keras.metrics.BinaryAccuracy(threshold=0, name='accuracy')])
+model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=base_learning_rate),loss=tf.keras.losses.BinaryCrossentropy(from_logits=False), metrics=[tf.keras.metrics.BinaryAccuracy(threshold=0, name='accuracy')])
 path = 'data/testing'
 
 csv_logger = CSVLogger('log.csv', append=True, separator=';')
