@@ -21,22 +21,21 @@ print(model.summary())
 preprocess_input = tf.keras.applications.inception_v3.preprocess_input
 validation_dataset = tf.keras.utils.image_dataset_from_directory("initialDataset/validation", shuffle=False, batch_size=8, image_size=(299, 299))
 
-processedImg = []
-labelsList = []
-for images, labels in validation_dataset.take(1):  # only take first element of dataset
-    newLabel = labels.numpy().tolist()
-    for l in newLabel:
-        print(l)
-        labelsList.append(l)
+labels = np.concatenate([labels for imgs, labels in validation_dataset], axis=0)
+# for images, labels in validation_dataset.take(1):  # only take first element of dataset
+#     newLabel = labels.numpy().tolist()
+#     for l in newLabel:
+#         print(l)
+#         labelsList.append(l)
     
-    processedImg.append(preprocess_input(images.numpy()))
+#     processedImg.append(preprocess_input(images.numpy()))
 
 #processedImg = np.array(processedImg) #Convert python list into numpy array
 
 predictions = model.predict(validation_dataset)
 print("Total Predictions: ", len(predictions))
 
-fpr_keras, tpr_keras, thresholds_keras = roc_curve(labelsList, predictions)
+fpr_keras, tpr_keras, thresholds_keras = roc_curve(labels, predictions)
 auc_keras = auc(fpr_keras, tpr_keras)
 
 plt.figure(1)
