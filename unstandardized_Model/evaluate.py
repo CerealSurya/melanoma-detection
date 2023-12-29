@@ -22,7 +22,7 @@ for images, labels in validation_dataset.take(1):  # only take first element of 
 #processedImg = np.array(processedImg) #Convert python list into numpy array
 
 predictions = model.predict(validation_dataset)
-
+print(len(predictions))
 for yPrediction in predictions:
     print(yPrediction)
 
