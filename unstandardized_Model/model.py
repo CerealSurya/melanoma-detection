@@ -19,7 +19,7 @@ IMG_SIZE = (299, 299)
 train_dir = "initialDataset"
 validation_dir = "initialDataset/validation"
 train_dataset = tf.keras.utils.image_dataset_from_directory(train_dir, shuffle=True, batch_size=BATCH_SIZE, image_size=IMG_SIZE)
-#validation_dataset = tf.keras.utils.image_dataset_from_directory(validation_dir, shuffle=True, batch_size=BATCH_SIZE, image_size=IMG_SIZE)
+validation_dataset = tf.keras.utils.image_dataset_from_directory(validation_dir, shuffle=True, batch_size=BATCH_SIZE, image_size=IMG_SIZE)
 preprocess_input = tf.keras.applications.inception_v3.preprocess_input
 
 
@@ -57,5 +57,5 @@ model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=base_learning_rat
 path = 'data/testing'
 
 csv_logger = CSVLogger('log.csv', append=True, separator=';')
-model.fit(train_dataset, epochs=2, callbacks=[csv_logger]) #, validation_data=validation_dataset
+model.fit(train_dataset, epochs=2, callbacks=[csv_logger], validation_data=validation_dataset)
 model.save('machine.keras')
