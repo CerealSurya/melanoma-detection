@@ -31,7 +31,7 @@ image_batch, label_batch = next(iter(train_dataset)) #Utilizes keras api to get 
 feature_batch = base_model(image_batch) # Gets the features (inputs of the layers) of the model from passing in the images
 global_average_layer = tf.keras.layers.GlobalAveragePooling2D() 
 feature_batch_average = global_average_layer(feature_batch) #Pools the features together to simplify them to get an output. Helps simplify network size and computing. Precursor to fully connected layer
-prediction_layer = tf.keras.layers.Dense(1, activation="relu") #Fully connected layer, getting prediction
+prediction_layer = tf.keras.layers.Dense(1, activation="sigmoid") #Fully connected layer, getting prediction
 prediction_batch = prediction_layer(feature_batch_average) #Applying it to the features
 
 
