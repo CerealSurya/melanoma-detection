@@ -58,4 +58,16 @@ path = 'data/testing'
 
 csv_logger = CSVLogger('log.csv', append=True, separator=';')
 model.fit(train_dataset, epochs=2, callbacks=[csv_logger], validation_data=validation_dataset)
-model.save('machine.keras')
+
+
+# #----------------------- Fine Tuning
+base_model.trainable = True
+
+# Fine-tune from this layer onwards
+fine_tune_at = 220
+
+# Freeze all the layers before the `fine_tune_at` layer
+for layer in base_model.layers[:fine_tune_at]:
+  layer.trainable = False
+model.fit(train_dataset, epochs=10, callbacks=[csv_logger], validation_data=validation_dataset)
+model.save('machineFineTuned.keras')
