@@ -70,4 +70,5 @@ fine_tune_at = 220
 for layer in base_model.layers[:fine_tune_at]:
   layer.trainable = False
 model.fit(train_dataset, epochs=10, callbacks=[csv_logger], validation_data=validation_dataset)
+base_model.save('trainedInception.keras')
 model.save('machineFineTuned.keras')
