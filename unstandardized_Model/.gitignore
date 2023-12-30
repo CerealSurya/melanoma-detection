@@ -1,3 +1,6 @@
 initialDataset/
 initialDataset.zip
 machine.keras
+fpr.txt
+thresholds.txt
+tpr.txt
