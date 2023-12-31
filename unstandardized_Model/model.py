@@ -8,7 +8,7 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.python.keras.optimizer_v2.rmsprop import RMSprop 
 from keras.callbacks import CSVLogger
 
-
+#!Validation dataset skewed(not representational of the training set) --> Could lead to possible overfitting
 #https://pythonprogramming.net/convolutional-neural-network-deep-learning-python-tensorflow-keras/?completed=/loading-custom-data-deep-learning-python-tensorflow-keras/
 # ^^^ Use that to understand everything
 # gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=0.8)
@@ -69,7 +69,7 @@ fine_tune_at = 220
 # Freeze all the layers before the `fine_tune_at` layer
 for layer in base_model.layers[:fine_tune_at]:
   layer.trainable = False
-model.fit(train_dataset, epochs=6, callbacks=[csv_logger], validation_data=validation_dataset)
+model.fit(train_dataset, epochs=10, callbacks=[csv_logger], validation_data=validation_dataset)
 base_model.save('trainedInception.keras')
 model.save('machineFineTuned.keras')
 #For the second transfer we reconstruct this same model using the trainedInception.keras as the base training only from like 270 onwards
