@@ -47,12 +47,12 @@ x = preprocess_input(x) #Process all of the inputs. Manipulating their size and 
 
 x = base_model(x, training=False) #Pass in the inputs without manipulating weight values
 x = global_average_layer(x) #Precursor to fully connected layer (Pools everything together)
-x = tf.keras.layers.Dropout(0.3)(x)
+x = tf.keras.layers.Dropout(0.4)(x)
 outputs = prediction_layer(x) #Get our outputs from the fully connected layer we defined above
 
 model = tf.keras.Model(inputs, outputs)
 print(model.summary())
-base_learning_rate = 0.001
+base_learning_rate = 0.0001
 model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=base_learning_rate),loss=tf.keras.losses.BinaryCrossentropy(from_logits=False), metrics=[tf.keras.metrics.BinaryAccuracy(threshold=0, name='accuracy')])
 path = 'data/testing'
 
