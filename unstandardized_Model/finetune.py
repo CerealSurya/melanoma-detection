@@ -10,7 +10,7 @@ from tensorflow.python.keras.optimizer_v2.rmsprop import RMSprop
 
 oldModel = tf.keras.models.load_model('machine.keras')
 
-BATCH_SIZE = 8
+BATCH_SIZE = 2
 IMG_SIZE = (299, 299)
 train_dir = "initialDataset"
 validation_dir = "initialDataset/validation"
