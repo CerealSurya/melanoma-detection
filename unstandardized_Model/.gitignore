@@ -1,6 +1,8 @@
 initialDataset/
 initialDataset.zip
 machine.keras
+test.keras
 fpr.txt
 thresholds.txt
 tpr.txt
+imgs/
