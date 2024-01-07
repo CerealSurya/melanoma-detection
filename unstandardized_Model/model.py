@@ -16,7 +16,7 @@ from keras.callbacks import CSVLogger
 
 BATCH_SIZE = 8
 IMG_SIZE = (299, 299)
-train_dir = "initialDataset"
+train_dir = "initialDataset/train"
 validation_dir = "initialDataset/validation"
 train_dataset = tf.keras.utils.image_dataset_from_directory(train_dir, shuffle=True, batch_size=BATCH_SIZE, image_size=IMG_SIZE)
 validation_dataset = tf.keras.utils.image_dataset_from_directory(validation_dir, shuffle=True, batch_size=BATCH_SIZE, image_size=IMG_SIZE)

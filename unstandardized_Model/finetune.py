@@ -12,7 +12,7 @@ oldModel = tf.keras.models.load_model('machine.keras')
 
 BATCH_SIZE = 2
 IMG_SIZE = (299, 299)
-train_dir = "initialDataset"
+train_dir = "initialDataset/train"
 validation_dir = "initialDataset/validation"
 train_dataset = tf.keras.utils.image_dataset_from_directory(train_dir, shuffle=True, batch_size=BATCH_SIZE, image_size=IMG_SIZE)
 validation_dataset = tf.keras.utils.image_dataset_from_directory(validation_dir, shuffle=True, batch_size=BATCH_SIZE, image_size=IMG_SIZE)
@@ -31,8 +31,8 @@ image_batch, label_batch = next(iter(train_dataset)) #Utilizes keras api to get 
 feature_batch = base_model(image_batch) # Gets the features (inputs of the layers) of the model from passing in the images
 global_average_layer = tf.keras.layers.GlobalAveragePooling2D() 
 feature_batch_average = global_average_layer(feature_batch) #Pools the features together to simplify them to get an output. Helps simplify network size and computing. Precursor to fully connected layer
-prediction_layer = tf.keras.layers.Dense(1, activation="sigmoid") #Fully connected layer, getting prediction
-#prediction_layer = tf.keras.models.Sequential(oldModel.layers[len(oldModel.layers) - 1])
+#prediction_layer = tf.keras.layers.Dense(1, activation="sigmoid") #Fully connected layer, getting prediction
+prediction_layer = tf.keras.models.Sequential(oldModel.layers[len(oldModel.layers) - 1])
 
 data_augmentation = tf.keras.Sequential([
   tf.keras.layers.RandomFlip('horizontal'),
