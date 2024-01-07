@@ -6,6 +6,7 @@ from tensorflow.keras import optimizers
 from tensorflow.keras.preprocessing import image
 from tensorflow.keras.preprocessing.image import ImageDataGenerator 
 from tensorflow.python.keras.optimizer_v2.rmsprop import RMSprop 
+import sys
 
 """" Use this for importing singular img
 from PIL import Image
@@ -14,9 +15,11 @@ img = tf.keras.utils.array_to_img(img_data)
 array = tf.keras.utils.image.img_to_array(img)
 model.predict(array)
 """
-
+kerasFile = sys.argv[1]
+print(kerasFile)
 #TODO: Load keras model, load validation dataset(dermnet) --> reformat it all to fit inception, run evaluate on everything, log accuracy
-model = tf.keras.models.load_model('machine.keras')
+model = tf.keras.models.load_model(kerasFile)
+
 print(model.summary())
 preprocess_input = tf.keras.applications.inception_v3.preprocess_input
 validation_dataset = tf.keras.utils.image_dataset_from_directory("initialDataset/validation", shuffle=False, batch_size=8, image_size=(299, 299))
