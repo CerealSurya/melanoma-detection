@@ -16,7 +16,7 @@ array = tf.keras.utils.image.img_to_array(img)
 model.predict(array)
 """
 kerasFile = sys.argv[1]
-print(kerasFile)
+print(f'Running evaluation on file {kerasFile}')
 #TODO: Load keras model, load validation dataset(dermnet) --> reformat it all to fit inception, run evaluate on everything, log accuracy
 model = tf.keras.models.load_model(kerasFile)
 
