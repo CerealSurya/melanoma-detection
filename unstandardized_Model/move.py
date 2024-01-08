@@ -21,7 +21,8 @@ while num < 500:
     try:
         os.rename(f"./initialDataset/train/lesion_NotPresent/seed{counter}.png", f"./initialDataset/validation/lesion_NotPresent/seed{counter}.png")
     except:
-        num-=1
-        print(f"error occured on img seed{num}")
+        if num > 0:
+            num-=1
+        print(f"error occured on img seed{counter}")
     num+=1
     counter+=1
