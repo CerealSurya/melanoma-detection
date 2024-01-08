@@ -3,14 +3,13 @@ import os
 #GOAL: Move 1000 imgs from training to create validation data
 num = 0
 zeros = "000"
-for i in range(10):
-    print(num)
+for i in range(500):
     if num >= 10 and num < 100:
         zeros = "00"
     elif num >= 100:
         zeros = "0"
     try:
-        os.rename(f"./initialDataset/train/lesion_Present/mn500/mn500/mn500/seed{zeros}{num}.png", f"./initialDataset/validation/lesion_Present/seed{zeros}{num}.png")
+        os.rename(f"./initialDataset/train/lesion_Present/mn500/mn500/mn500/seed{zeros}{num}.jpg", f"./initialDataset/validation/lesion_Present/seed{zeros}{num}.jpg")
     except:
         print(f"error occured on img seed{zeros}{num}")
     num+=1
