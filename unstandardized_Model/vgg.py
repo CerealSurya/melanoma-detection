@@ -7,7 +7,6 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.python.keras.optimizer_v2.rmsprop import RMSprop 
 from keras.callbacks import CSVLogger
 
-
 BATCH_SIZE = 2
 IMG_SIZE = (224, 224)
 train_dir = "initialDataset/train"
@@ -51,6 +50,7 @@ base_learning_rate = 0.0001
 model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=base_learning_rate),loss=tf.keras.losses.BinaryCrossentropy(from_logits=False), metrics=[tf.keras.metrics.BinaryAccuracy(threshold=0, name='accuracy'), tf.keras.metrics.AUC(name="AUC")])
 
 csv_logger = CSVLogger('log.csv', append=True, separator=';')
-model.fit(train_dataset, epochs=5, callbacks=[csv_logger], validation_data=validation_dataset, shuffle=True)
+model.fit(train_dataset, epochs=1, callbacks=[csv_logger], validation_data=validation_dataset, shuffle=True)
 
-model.save('machineVGG.keras')
+model.save('machineVGG.h5')
+#loaded_model1 = tf.keras.models.load_model('machineVGG.h5')
