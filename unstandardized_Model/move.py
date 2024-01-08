@@ -14,11 +14,24 @@ for i in range(500):
         print(f"error occured on img seed{zeros}{num}")
     num+=1
 
+# num = 0
+# counter = 0
+# while num < 500:
+#     try:
+#         os.rename(f"./initialDataset/train/lesion_NotPresent/seed{counter}.png", f"./initialDataset/validation/lesion_NotPresent/seed{counter}.png")
+#     except:
+#         if num > 0:
+#             num-=1
+#         print(f"error occured on img seed{counter}")
+#     num+=1
+#     counter+=1
+
+#put 500 files back to training cuz i made oopsie
 num = 0
 counter = 0
 while num < 500:
     try:
-        os.rename(f"./initialDataset/train/lesion_NotPresent/seed{counter}.png", f"./initialDataset/validation/lesion_NotPresent/seed{counter}.png")
+        os.rename(f"./initialDataset/validation/lesion_NotPresent/seed{counter}.png",f"./initialDataset/train/lesion_NotPresent/seed{counter}.png")
     except:
         if num > 0:
             num-=1
