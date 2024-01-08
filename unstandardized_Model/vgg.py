@@ -8,7 +8,7 @@ from tensorflow.python.keras.optimizer_v2.rmsprop import RMSprop
 from keras.callbacks import CSVLogger
 
 
-BATCH_SIZE = 8
+BATCH_SIZE = 2
 IMG_SIZE = (224, 224)
 train_dir = "initialDataset/train"
 validation_dir = "initialDataset/validation"
