@@ -35,7 +35,7 @@ data_augmentation = tf.keras.Sequential([
   tf.keras.layers.RandomRotation(0.2),
 ])
 
-inputs = tf.keras.Input(shape=(299, 299, 3))
+inputs = tf.keras.Input(shape=(224, 224, 3))
 #Our defined model with the steps in sequential order
 x = data_augmentation(inputs) #Augment all of the inputs
 x = preprocess_input(x) #Process all of the inputs. Manipulating their size and color values to fit requirements of the model
@@ -49,7 +49,6 @@ model = tf.keras.Model(inputs, outputs)
 print(model.summary())
 base_learning_rate = 0.0001
 model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=base_learning_rate),loss=tf.keras.losses.BinaryCrossentropy(from_logits=False), metrics=[tf.keras.metrics.BinaryAccuracy(threshold=0, name='accuracy'), tf.keras.metrics.AUC(name="AUC")])
-path = 'data/testing'
 
 csv_logger = CSVLogger('log.csv', append=True, separator=';')
 model.fit(train_dataset, epochs=5, callbacks=[csv_logger], validation_data=validation_dataset, shuffle=True)
