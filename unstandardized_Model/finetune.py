@@ -8,20 +8,23 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.python.keras.optimizer_v2.rmsprop import RMSprop 
 #For the second transfer we reconstruct this same model using the trainedInception.keras as the base training only from like 270 onwards
 
-oldModel = tf.keras.models.load_model('machine.keras')
+#oldModel = tf.keras.models.load_model('machine.keras') 
+oldModel = tf.keras.models.load_model('machineVGG.h5')
 
-BATCH_SIZE = 1
-IMG_SIZE = (299, 299)
+
+BATCH_SIZE = 2
+IMG_SIZE = (224, 224)
 train_dir = "initialDataset/train"
 validation_dir = "initialDataset/validation"
 train_dataset = tf.keras.utils.image_dataset_from_directory(train_dir, shuffle=True, batch_size=BATCH_SIZE, image_size=IMG_SIZE)
 validation_dataset = tf.keras.utils.image_dataset_from_directory(validation_dir, shuffle=True, batch_size=BATCH_SIZE, image_size=IMG_SIZE)
-preprocess_input = tf.keras.applications.inception_v3.preprocess_input
+preprocess_input = tf.keras.applications.vgg16.preprocess_input
 
-base_model = tf.keras.applications.inception_v3.InceptionV3(input_shape= IMG_SIZE + (3,), include_top=False, weights='imagenet')
+
+base_model = tf.keras.applications.vgg16.VGG16(input_shape= IMG_SIZE + (3,), include_top=False, weights='imagenet')
 print(len(base_model.layers))
 # Fine-tune from this layer onwards
-fine_tune_at = 220
+fine_tune_at = 16
 # Freeze all the layers before the `fine_tune_at` layer
 for layer in base_model.layers[:fine_tune_at]:
   layer.trainable = False
@@ -39,7 +42,7 @@ data_augmentation = tf.keras.Sequential([
   tf.keras.layers.RandomRotation(0.2),
 ])
 
-inputs = tf.keras.Input(shape=(299, 299, 3))
+inputs = tf.keras.Input(shape=(224, 224, 3))
 #Our defined model with the steps in sequential order
 x = data_augmentation(inputs) #Augment all of the inputs
 x = preprocess_input(x) #Process all of the inputs. Manipulating their size and color values to fit requirements of the model
@@ -52,10 +55,9 @@ outputs = prediction_layer(x) #Get our outputs from the fully connected layer we
 model = tf.keras.Model(inputs, outputs)
 print(model.summary())
 base_learning_rate = 0.0001
-
 model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=base_learning_rate),loss=tf.keras.losses.BinaryCrossentropy(from_logits=False), metrics=[tf.keras.metrics.BinaryAccuracy(threshold=0, name='accuracy'), tf.keras.metrics.AUC(name="AUC")])
-path = 'data/testing'
 
-model.fit(train_dataset, epochs=4, validation_data=validation_dataset)
-base_model.save('fineTunedBase.keras')
-model.save('machineFineTune.keras')
+
+model.fit(train_dataset, epochs=10, validation_data=validation_dataset)
+base_model.save('fineTunedBase.h5')
+model.save('machineFineTune.h5')
