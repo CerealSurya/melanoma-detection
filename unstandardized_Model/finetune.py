@@ -12,7 +12,7 @@ from tensorflow.python.keras.optimizer_v2.rmsprop import RMSprop
 oldModel = tf.keras.models.load_model('machineVGG.h5')
 
 
-BATCH_SIZE = 2
+BATCH_SIZE = 1
 IMG_SIZE = (224, 224)
 train_dir = "initialDataset/train"
 validation_dir = "initialDataset/validation"
@@ -24,7 +24,7 @@ preprocess_input = tf.keras.applications.vgg16.preprocess_input
 base_model = tf.keras.applications.vgg16.VGG16(input_shape= IMG_SIZE + (3,), include_top=False, weights='imagenet')
 print(len(base_model.layers))
 # Fine-tune from this layer onwards
-fine_tune_at = 16
+fine_tune_at = 17
 # Freeze all the layers before the `fine_tune_at` layer
 for layer in base_model.layers[:fine_tune_at]:
   layer.trainable = False
@@ -47,7 +47,7 @@ inputs = tf.keras.Input(shape=(224, 224, 3))
 x = data_augmentation(inputs) #Augment all of the inputs
 x = preprocess_input(x) #Process all of the inputs. Manipulating their size and color values to fit requirements of the model
 
-x = base_model(x, training=False) #Pass in the inputs without manipulating weight values
+x = base_model(x, training=False) #Pass in the inputs without manipulating weight values, running BatchNormalization layers in inference mode
 x = global_average_layer(x) #Precursor to fully connected layer (Pools everything together)
 x = tf.keras.layers.Dropout(0.2)(x)
 outputs = prediction_layer(x) #Get our outputs from the fully connected layer we defined above
@@ -55,7 +55,7 @@ outputs = prediction_layer(x) #Get our outputs from the fully connected layer we
 model = tf.keras.Model(inputs, outputs)
 print(model.summary())
 base_learning_rate = 0.0001
-model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=base_learning_rate),loss=tf.keras.losses.BinaryCrossentropy(from_logits=False), metrics=[tf.keras.metrics.BinaryAccuracy(threshold=0, name='accuracy'), tf.keras.metrics.AUC(name="AUC")])
+model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=base_learning_rate),loss=tf.keras.losses.BinaryCrossentropy(from_logits=True), metrics=[tf.keras.metrics.BinaryAccuracy(threshold=0, name='accuracy'), tf.keras.metrics.AUC(name="AUC")])
 
 
 model.fit(train_dataset, epochs=10, validation_data=validation_dataset)
