@@ -11,19 +11,17 @@ from tensorflow.python.keras.optimizer_v2.rmsprop import RMSprop
 strategy = tf.distribute.MirroredStrategy()
 print('Number of devices: {}'.format(strategy.num_replicas_in_sync))
 #oldModel = tf.keras.models.load_model('machine.keras') 
+BATCH_SIZE = 2
+IMG_SIZE = (224, 224)
+preprocess_input = tf.keras.applications.vgg16.preprocess_input
+
+train_dir = "initialDataset/train"
+validation_dir = "initialDataset/validation"
+train_dataset = tf.keras.utils.image_dataset_from_directory(train_dir, shuffle=True, batch_size=BATCH_SIZE, image_size=IMG_SIZE)
+validation_dataset = tf.keras.utils.image_dataset_from_directory(validation_dir, shuffle=True, batch_size=BATCH_SIZE, image_size=IMG_SIZE)
 
 with strategy.scope(): #Makes things work with multiple gpus
   oldModel = tf.keras.models.load_model('machineVGG.h5')
-
-
-  BATCH_SIZE = 2
-  IMG_SIZE = (224, 224)
-  train_dir = "initialDataset/train"
-  validation_dir = "initialDataset/validation"
-  train_dataset = tf.keras.utils.image_dataset_from_directory(train_dir, shuffle=True, batch_size=BATCH_SIZE, image_size=IMG_SIZE)
-  validation_dataset = tf.keras.utils.image_dataset_from_directory(validation_dir, shuffle=True, batch_size=BATCH_SIZE, image_size=IMG_SIZE)
-  preprocess_input = tf.keras.applications.vgg16.preprocess_input
-
 
   base_model = tf.keras.applications.vgg16.VGG16(input_shape= IMG_SIZE + (3,), include_top=False, weights='imagenet')
   print(len(base_model.layers))
