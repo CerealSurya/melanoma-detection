@@ -14,7 +14,7 @@ from tensorflow.python.keras.optimizer_v2.rmsprop import RMSprop
 tf.keras.mixed_precision.set_global_policy('mixed_float16')
 
 print("Num GPUs Available: ", tf.config.list_physical_devices('GPU'))
-BATCH_SIZE = 2
+BATCH_SIZE = 1
 IMG_SIZE = (224, 224)
 preprocess_input = tf.keras.applications.vgg16.preprocess_input
 
@@ -57,7 +57,7 @@ x = base_model(x, training=False) #Pass in the inputs without manipulating weigh
 x = global_average_layer(x) #Precursor to fully connected layer (Pools everything together)
 x = tf.keras.layers.Dropout(0.2)(x)
 outputs = prediction_layer(x) #Get our outputs from the fully connected layer we defined above
-#outputs = tf.keras.layers.Activation('linear', dtype='float32')(outputs)
+outputs = tf.keras.layers.Activation('linear', dtype='float32')(outputs)
 
 model = tf.keras.Model(inputs, outputs)
 print(model.summary())
