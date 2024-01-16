@@ -30,7 +30,7 @@ oldModel = tf.keras.models.load_model('machineVGG.h5')
 base_model = tf.keras.applications.vgg16.VGG16(input_shape= IMG_SIZE + (3,), include_top=False, weights='imagenet')
 print(len(base_model.layers))
 # Fine-tune from this layer onwards
-fine_tune_at = 17
+fine_tune_at = 18
 # Freeze all the layers before the `fine_tune_at` layer
 for layer in base_model.layers[:fine_tune_at]:
   layer.trainable = False
@@ -68,6 +68,6 @@ callback = tf.keras.callbacks.EarlyStopping(monitor='loss', patience=2)
 model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=base_learning_rate),loss=tf.keras.losses.BinaryCrossentropy(from_logits=True), metrics=[tf.keras.metrics.BinaryAccuracy(threshold=0, name='accuracy'), tf.keras.metrics.AUC(name="AUC")])
 
 
-model.fit(train_dataset, epochs=3, validation_data=validation_dataset, callbacks=[callback])
+model.fit(train_dataset, epochs=5, validation_data=validation_dataset, callbacks=[callback])
 base_model.save('fineTunedBase.h5')
 model.save('machineFineTune.h5')
