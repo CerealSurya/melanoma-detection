@@ -29,8 +29,9 @@ oldModel = tf.keras.models.load_model('machineVGG.h5')
 
 base_model = tf.keras.applications.vgg16.VGG16(input_shape= IMG_SIZE + (3,), include_top=False, weights='imagenet')
 print(len(base_model.layers))
+print(base_model.summary())
 # Fine-tune from this layer onwards
-fine_tune_at = 18
+fine_tune_at = 16
 # Freeze all the layers before the `fine_tune_at` layer
 for layer in base_model.layers[:fine_tune_at]:
   layer.trainable = False
