@@ -66,6 +66,6 @@ base_learning_rate = 0.0001
 model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=base_learning_rate),loss=tf.keras.losses.BinaryCrossentropy(from_logits=True), metrics=[tf.keras.metrics.BinaryAccuracy(threshold=0, name='accuracy'), tf.keras.metrics.AUC(name="AUC")])
 
 
-model.fit(train_dataset, epochs=5, validation_data=validation_dataset)
+model.fit(train_dataset, epochs=4, validation_data=validation_dataset)
 base_model.save('fineTunedBase.h5')
 model.save('machineFineTune.h5')
