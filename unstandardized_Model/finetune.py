@@ -1,11 +1,6 @@
 import tensorflow as tf 
 import keras
 import numpy as np
-from sklearn.metrics import roc_curve, auc
-from matplotlib import pyplot as plt
-from tensorflow.keras import optimizers
-from tensorflow.keras.preprocessing import image
-from tensorflow.keras.preprocessing.image import ImageDataGenerator 
 from tensorflow.python.keras.optimizer_v2.rmsprop import RMSprop 
 #For the second transfer we reconstruct this same model using the trainedInception.keras as the base training only from like 270 onwards
 # strategy = tf.distribute.MirroredStrategy()
@@ -20,7 +15,7 @@ configproto.gpu_options.allow_growth = True
 sess = tf.compat.v1.Session(config=configproto) 
 tf.compat.v1.keras.backend.set_session(sess)
 
-BATCH_SIZE = 1
+BATCH_SIZE = 2
 IMG_SIZE = (224, 224)
 preprocess_input = tf.keras.applications.vgg16.preprocess_input
 
@@ -61,7 +56,7 @@ x = preprocess_input(x) #Process all of the inputs. Manipulating their size and 
 
 x = base_model(x, training=False) #Pass in the inputs without manipulating weight values, running BatchNormalization layers in inference mode
 x = global_average_layer(x) #Precursor to fully connected layer (Pools everything together)
-x = tf.keras.layers.Dropout(0.2)(x)
+x = tf.keras.layers.Dropout(0.4)(x)
 outputs = prediction_layer(x) #Get our outputs from the fully connected layer we defined above
 outputs = tf.keras.layers.Activation('linear', dtype='float32')(outputs)
 
@@ -71,6 +66,6 @@ base_learning_rate = 0.0001
 model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=base_learning_rate),loss=tf.keras.losses.BinaryCrossentropy(from_logits=True), metrics=[tf.keras.metrics.BinaryAccuracy(threshold=0, name='accuracy'), tf.keras.metrics.AUC(name="AUC")])
 
 
-model.fit(train_dataset, epochs=10, validation_data=validation_dataset)
+model.fit(train_dataset, epochs=5, validation_data=validation_dataset)
 base_model.save('fineTunedBase.h5')
 model.save('machineFineTune.h5')
