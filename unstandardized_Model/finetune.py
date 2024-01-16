@@ -13,7 +13,13 @@ from tensorflow.python.keras.optimizer_v2.rmsprop import RMSprop
 #oldModel = tf.keras.models.load_model('machine.keras') 
 tf.keras.mixed_precision.set_global_policy('mixed_float16')
 
-print("Num GPUs Available: ", tf.config.list_physical_devices('GPU'))
+print("Num GPUs Available: ", tf.config.list_physical_devices())
+
+configproto = tf.compat.v1.ConfigProto() 
+configproto.gpu_options.allow_growth = True
+sess = tf.compat.v1.Session(config=configproto) 
+tf.compat.v1.keras.backend.set_session(sess)
+
 BATCH_SIZE = 1
 IMG_SIZE = (224, 224)
 preprocess_input = tf.keras.applications.vgg16.preprocess_input
