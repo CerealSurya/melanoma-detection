@@ -2,10 +2,6 @@ import tensorflow as tf
 import numpy as np
 from sklearn.metrics import roc_curve, auc
 from matplotlib import pyplot as plt
-from tensorflow.keras import optimizers
-from tensorflow.keras.preprocessing import image
-from tensorflow.keras.preprocessing.image import ImageDataGenerator 
-from tensorflow.python.keras.optimizer_v2.rmsprop import RMSprop 
 import sys
 
 """" Use this for importing singular img
@@ -17,7 +13,6 @@ model.predict(array)
 """
 kerasFile = sys.argv[1]
 print(f'Running evaluation on file {kerasFile}')
-#TODO: Load keras model, load validation dataset(dermnet) --> reformat it all to fit inception, run evaluate on everything, log accuracy
 model = tf.keras.models.load_model(kerasFile)
 
 print(model.summary())
@@ -53,4 +48,24 @@ with open("tpr.txt", "w") as f:
         f.write(str(i) + "\n")
 with open("thresholds.txt", "w") as f:
     for i in thresholds_keras:
-        f.write(str(i) + "\n")      
+        f.write(str(i) + "\n")
+
+plt.figure(1)
+plt.plot([0, 1], [0, 1], 'k--')
+plt.plot(fpr_keras, tpr_keras, label='Keras (area = {:.3f})'.format(auc_keras))
+plt.xlabel('False positive rate')
+plt.ylabel('True positive rate')
+plt.title('ROC curve')
+plt.legend(loc='best')
+plt.show()
+# Zoom in view of the upper left corner.
+plt.figure(2)
+plt.xlim(0, 0.2)
+plt.ylim(0.8, 1)
+plt.plot([0, 1], [0, 1], 'k--')
+plt.plot(fpr_keras, tpr_keras, label='Keras (area = {:.3f})'.format(auc_keras))
+plt.xlabel('False positive rate')
+plt.ylabel('True positive rate')
+plt.title('ROC curve (zoomed in at top left)')
+plt.legend(loc='best')
+plt.show()
