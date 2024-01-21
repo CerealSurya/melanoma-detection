@@ -12,6 +12,7 @@ from keras.callbacks import CSVLogger
 Benign: 37,540
 Malignant: 5,180
 """
+#!TO get data we are going to need to do what we did for fitzpatrick and get the download links for my dataset run the script on the vm
 tf.keras.mixed_precision.set_global_policy('mixed_float16')
 
 print("Num GPUs Available: ", tf.config.list_physical_devices())
@@ -74,8 +75,8 @@ print(model.summary())
 base_learning_rate = 0.0001
 callback = tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=2)
 
-model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=base_learning_rate),loss=tf.keras.losses.BinaryCrossentropy(from_logits=True), metrics=[tf.keras.metrics.BinaryAccuracy(threshold=0, name='accuracy'), tf.keras.metrics.AUC(name="AUC")])
+model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=base_learning_rate),loss=tf.keras.losses.BinaryCrossentropy(from_logits=False), metrics=[tf.keras.metrics.BinaryAccuracy(threshold=0, name='accuracy'), tf.keras.metrics.AUC(name="AUC")])
 
 
-model.fit(train_dataset, epochs=3, validation_data=validation_dataset, callbacks=[callback])
+model.fit(train_dataset, epochs=5, validation_data=validation_dataset, callbacks=[callback])
 model.save('machine.h5')
