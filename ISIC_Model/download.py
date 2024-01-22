@@ -2,7 +2,7 @@ import pandas as pd
 import urllib.request 
 from PIL import Image 
 
-#https://isic-challenge-data.s3.amazonaws.com/2020/ISIC_2020_Training_JPEG.zip
+#https://isic-challenge-data.s3.amazonaws.com/2020/ISIC_2020_Test_JPEG.zip
 
 
 opener=urllib.request.build_opener()
@@ -14,7 +14,7 @@ counter2 = 0
 # url = "https://www.dermaamin.com/site/images/clinical-pic/m/minocycline-pigmentation/minocycline-pigmentation1.jpg"
 # urllib.request.urlretrieve(url, f"initialDataset/lesion_Present/seed{counter}.jpg") 
 
-urllib.request.urlretrieve("https://isic-challenge-data.s3.amazonaws.com/2020/ISIC_2020_Training_JPEG.zip", f"train.zip") 
+urllib.request.urlretrieve("https://isic-challenge-data.s3.amazonaws.com/2020/ISIC_2020_Test_JPEG.zip", "ham.zip") 
 
 # try:
 #     urllib.request.urlretrieve("https://isic-challenge-data.s3.amazonaws.com/2020/ISIC_2020_Training_JPEG.zip", f"combinedDataset/train.zip") 
