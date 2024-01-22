@@ -14,7 +14,7 @@ counter2 = 0
 # url = "https://www.dermaamin.com/site/images/clinical-pic/m/minocycline-pigmentation/minocycline-pigmentation1.jpg"
 # urllib.request.urlretrieve(url, f"initialDataset/lesion_Present/seed{counter}.jpg") 
 
-urllib.request.urlretrieve("https://isic-challenge-data.s3.amazonaws.com/2020/ISIC_2020_Test_JPEG.zip", "ham.zip") 
+urllib.request.urlretrieve("https://isic-challenge-data.s3.amazonaws.com/2020/ISIC_2020_Test_JPEG.zip", "newTest.zip") 
 
 # try:
 #     urllib.request.urlretrieve("https://isic-challenge-data.s3.amazonaws.com/2020/ISIC_2020_Training_JPEG.zip", f"combinedDataset/train.zip") 
