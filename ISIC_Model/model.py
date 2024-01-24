@@ -12,7 +12,7 @@ from keras.callbacks import CSVLogger
 Benign: 37,540
 Malignant: 5,180
 """
-#!TO get data we are going to need to do what we did for fitzpatrick and get the download links for my dataset run the script on the vm
+#TODO: 1. clear up data on disk (go into pi and delete the datasets there), 2. split the training into benign and malignant (use the groundtruth csv) 3. put either original test or newTest into the train (newTest needs to be extracted, it only extracted partially)
 tf.keras.mixed_precision.set_global_policy('mixed_float16')
 
 print("Num GPUs Available: ", tf.config.list_physical_devices())
