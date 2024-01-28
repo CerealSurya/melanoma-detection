@@ -5,6 +5,16 @@ import pandas as pd
 
 df = pd.read_csv("HAM10000_metadata.csv")
 df = df.reset_index()
+num = 0
+while(num < 959): 
+    #less than 34320, greater than 24306
+    rand = int((random.random() * (34320 - 24306)) + 24306)
+    rand = "00" + str(rand) #random 7 digit number
+    try:
+        os.rename(f"./combinedDataset/test/benign/HAM_{rand}.jpg", f"./combinedDataset/HAM10000_images_part_1/ISIC_{rand}.jpg")        
+    except:
+        num -= 1
+    num+=1
 "Upscaling minority malignant dataset as much as posisble to reduce bias"
 # for i in df.index: #1113 melanomic images in HAM10000 
 #     if df.loc[i].at['dx'] == 'mel':
@@ -17,8 +27,8 @@ df = df.reset_index()
 #             except:
 #                 print(f"error occured on {image}")
 
-"Moving 4372 images from HAM10000 to our validation to maintain 10% of data as validation"
-num = 0
+# "Moving 4372 images from HAM10000 to our validation to maintain 10% of data as validation"
+# num = 0
 # while(num < 4372): 
 #     #less than 34320, greater than 24306
 #     rand = int((random.random() * (34320 - 24306)) + 24306)
@@ -35,14 +45,3 @@ num = 0
 #     #     print(f"error occured")
 #     #     num -= 1
 #     num+=1
-
-while(num < 2728): 
-    #less than 34320, greater than 24306
-    rand = int((random.random() * (34320 - 24306)) + 24306)
-    rand = "00" + str(rand) #random 7 digit number
-    try:
-        os.rename(f"./combinedDataset/test/benign/HAM_{rand}.jpg" ,f"./combinedDataset/HAM10000_images_part_1/HAM_{rand}.jpg")        
-        print(f"Moved {rand}.jpg back to HAM")
-    except:
-        num -= 1
-    num+= 1

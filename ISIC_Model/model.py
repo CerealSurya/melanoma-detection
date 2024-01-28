@@ -9,8 +9,7 @@ from tensorflow.python.keras.optimizer_v2.rmsprop import RMSprop
 from keras.callbacks import CSVLogger
 
 """Split: 
-Benign: 37,540
-Malignant: 5,180
+
 """
 #TODO: 1. clear up data on disk (go into pi and delete the datasets there), 2. split the training into benign and malignant (use the groundtruth csv) 3. put either original test or newTest into the train (newTest needs to be extracted, it only extracted partially)
 tf.keras.mixed_precision.set_global_policy('mixed_float16')
