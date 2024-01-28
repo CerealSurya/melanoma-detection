@@ -19,18 +19,29 @@ df = df.reset_index()
 
 "Moving 4372 images from HAM10000 to our validation to maintain 10% of data as validation"
 num = 0
-while(num < 3175): 
+# while(num < 4372): 
+#     #less than 34320, greater than 24306
+#     rand = int((random.random() * (34320 - 24306)) + 24306)
+#     rand = "00" + str(rand) #random 7 digit number
+#     #try:
+#     if f'ISIC_{rand}.jpg' in os.listdir("./combinedDataset/HAM10000_images_part_1"):
+#         os.rename(f"./combinedDataset/HAM10000_images_part_1/ISIC_{rand}.jpg", f"./combinedDataset/test/benign/HAM_{rand}.jpg")        
+#     elif f'ISIC_{rand}.jpg' in os.listdir("./combinedDataset/HAM10000_images_part_2"):
+#         os.rename(f"./combinedDataset/HAM10000_images_part_2/ISIC_{rand}.jpg", f"./combinedDataset/test/benign/HAM_{rand}.jpg")
+#     else:
+#         print("Could not find img in HAM metadata") #probably a malignant image that was already used
+#         num -= 1
+#     # except:
+#     #     print(f"error occured")
+#     #     num -= 1
+#     num+=1
+
+while(num < 2729): 
     #less than 34320, greater than 24306
     rand = int((random.random() * (34320 - 24306)) + 24306)
     rand = "00" + str(rand) #random 7 digit number
     #try:
-    if f'ISIC_{rand}.jpg' in os.listdir("./combinedDataset/HAM10000_images_part_1"):
-        os.rename(f"./combinedDataset/HAM10000_images_part_1/ISIC_{rand}.jpg", f"./combinedDataset/test/benign/HAM_{rand}.jpg")        
-    elif f'ISIC_{rand}.jpg' in os.listdir("./combinedDataset/HAM10000_images_part_2"):
-        os.rename(f"./combinedDataset/HAM10000_images_part_2/ISIC_{rand}.jpg", f"./combinedDataset/test/benign/HAM_{rand}.jpg")
-    else:
-        print("Could not find img in HAM metadata")
-        num -= 1
+    os.rename(f"./combinedDataset/test/benign/HAM_{rand}.jpg" ,f"./combinedDataset/HAM10000_images_part_1/HAM_{rand}.jpg")        
     # except:
     #     print(f"error occured")
     #     num -= 1
