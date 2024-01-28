@@ -36,13 +36,13 @@ num = 0
 #     #     num -= 1
 #     num+=1
 
-while(num < 2729): 
+while(num < 2728): 
     #less than 34320, greater than 24306
     rand = int((random.random() * (34320 - 24306)) + 24306)
     rand = "00" + str(rand) #random 7 digit number
-    #try:
-    os.rename(f"./combinedDataset/test/benign/HAM_{rand}.jpg" ,f"./combinedDataset/HAM10000_images_part_1/HAM_{rand}.jpg")        
-    # except:
-    #     print(f"error occured")
-    #     num -= 1
-    num+=1
+    try:
+        os.rename(f"./combinedDataset/test/benign/HAM_{rand}.jpg" ,f"./combinedDataset/HAM10000_images_part_1/HAM_{rand}.jpg")        
+        print(f"Moved {rand}.jpg back to HAM")
+    except:
+        num -= 1
+    num+= 1
