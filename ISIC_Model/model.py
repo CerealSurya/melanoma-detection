@@ -33,6 +33,7 @@ validation_dataset = tf.keras.utils.image_dataset_from_directory(validation_dir,
 oldModel = tf.keras.models.load_model('../unstandardized_Model/machineFineTune.h5')
 
 base_model = tf.keras.models.load_model('../unstandardized_Model/fineTunedBase.h5')
+base_model.trainable = False
 print(len(base_model.layers))
 print(base_model.summary())
 # # Fine-tune from this layer onwards
