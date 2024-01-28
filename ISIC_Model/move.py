@@ -10,13 +10,13 @@ df = df.reset_index()
 for i in df.index: #1113 melanomic images in HAM10000 
     if df.loc[i].at['dx'] == 'mel':
             image = df.loc[i].at['image_id'] + '.jpg'
-        #try:
-            num = 1
-            if image in os.listdir("./combinedDataset/HAM10000_images_part_2"):
-                num = 2
-            os.rename(f"./combinedDataset/HAM10000_images_part_{num}/{image}", f"./combinedDataset/train/malignant/HAM_{image[5:]}")
-        # except:
-        #     print(f"error occured on {image}")
+            try:
+                num = 1
+                if image in os.listdir("./combinedDataset/HAM10000_images_part_2"):
+                    num = 2
+                os.rename(f"./combinedDataset/HAM10000_images_part_{num}/{image}", f"./combinedDataset/train/malignant/HAM_{image[5:]}")
+            except:
+                print(f"error occured on {image}")
 
 "Moving 4372 images from HAM10000 to our validation to maintain 10% of data as validation"
 # num = 0
