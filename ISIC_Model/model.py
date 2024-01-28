@@ -9,9 +9,9 @@ from tensorflow.python.keras.optimizer_v2.rmsprop import RMSprop
 from keras.callbacks import CSVLogger
 
 """Split: 
-
+Benign: 37574
+Malignant: 1697
 """
-#TODO: 1. clear up data on disk (go into pi and delete the datasets there), 2. split the training into benign and malignant (use the groundtruth csv) 3. put either original test or newTest into the train (newTest needs to be extracted, it only extracted partially)
 tf.keras.mixed_precision.set_global_policy('mixed_float16')
 
 print("Num GPUs Available: ", tf.config.list_physical_devices())
@@ -71,7 +71,7 @@ outputs = tf.keras.layers.Activation('linear', dtype='float32')(outputs) #identi
 
 model = tf.keras.Model(inputs, outputs)
 print(model.summary())
-base_learning_rate = 0.0001
+base_learning_rate = 0.00001
 callback = tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=2)
 
 model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=base_learning_rate),loss=tf.keras.losses.BinaryCrossentropy(from_logits=False), metrics=[tf.keras.metrics.BinaryAccuracy(threshold=0, name='accuracy'), tf.keras.metrics.AUC(name="AUC")])
