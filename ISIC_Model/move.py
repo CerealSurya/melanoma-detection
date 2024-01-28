@@ -32,10 +32,10 @@ while(num < 4372): #ISIC_2907414.jpg
                     status = 'benign' #should all be benign!
                     
         if status != '':
-            num = 1
+            daNum = 1
             if image in os.listdir("./combinedDataset/HAM10000_images_part_2"):
-                num = 2
-            os.rename(f"./combinedDataset/HAM10000_images_part_{num}/ISIC_{rand}.jpg", f"./combinedDataset/test/{status}/HAM_{rand}.jpg")
+                daNum = 2
+            os.rename(f"./combinedDataset/HAM10000_images_part_{daNum}/ISIC_{rand}.jpg", f"./combinedDataset/test/{status}/HAM_{rand}.jpg")
         else:
             print("Could not find img in HAM metadata")
             num -= 1
@@ -43,4 +43,3 @@ while(num < 4372): #ISIC_2907414.jpg
         print(f"error occured")
         num -= 1
     num+=1
-    
