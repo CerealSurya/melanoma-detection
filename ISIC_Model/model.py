@@ -47,8 +47,8 @@ image_batch, label_batch = next(iter(train_dataset)) #Utilizes keras api to get 
 feature_batch = base_model(image_batch) # Gets the features (inputs of the layers) of the model from passing in the images
 global_average_layer = tf.keras.layers.GlobalAveragePooling2D() 
 #prediction_layer = tf.keras.layers.Dense(1, activation="sigmoid") #Fully connected layer, getting prediction
-oldPrediction = tf.keras.models.Sequential(oldModel.layers[len(oldModel.layers) - 1]) #Previous classification head
-oldPrediction.trainable = False #Just training new classification head
+# oldPrediction = tf.keras.models.Sequential(oldModel.layers[len(oldModel.layers) - 1]) #Previous classification head
+# oldPrediction.trainable = False #Just training new classification head
 prediction_layer = tf.keras.layers.Dense(1, activation="sigmoid") #Fully connected layer, getting new prediction of benign or malignant
 
 
@@ -66,8 +66,8 @@ x = preprocess_input(x) #Process all of the inputs. Manipulating their size and 
 x = base_model(x, training=False) #Pass in the inputs without manipulating weight values, running BatchNormalization layers in inference mode
 x = global_average_layer(x) #Precursor to fully connected layer (Pools everything together)
 x = tf.keras.layers.Dropout(0.4)(x)
-firstOutput = oldPrediction(x) #Get our outputs from the fully connected layer we defined above
-outputs = prediction_layer(firstOutput)
+#firstOutput = oldPrediction(x) #Get our outputs from the fully connected layer we defined above
+outputs = prediction_layer(x) #firstOutput
 outputs = tf.keras.layers.Activation('linear', dtype='float32')(outputs) #identitiy function to increase computing w/ mixedfloat16
 
 model = tf.keras.Model(inputs, outputs)
