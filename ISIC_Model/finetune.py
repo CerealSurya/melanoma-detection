@@ -51,7 +51,7 @@ global_average_layer = tf.keras.layers.GlobalAveragePooling2D()
 oldPrediction = tf.keras.models.Sequential(oldModel.layers[len(oldModel.layers) - 2]) #Previous classification head
 oldPrediction.trainable = True #Just training new classification head
 prediction_layer = tf.keras.models.Sequential(firstModel.layers[len(firstModel.layers) - 2]) #Fully connected layer, getting new prediction of benign or malignant
-print(prediction_layer.summary())
+print(len(prediction_layer.layers))
 
 data_augmentation = tf.keras.Sequential([
   tf.keras.layers.RandomFlip('horizontal'),
@@ -69,6 +69,7 @@ x = global_average_layer(x) #Precursor to fully connected layer (Pools everythin
 x = tf.keras.layers.Dropout(0.4)(x)
 firstOutput = oldPrediction(x) #Get our outputs from the fully connected layer we defined above
 outputs = prediction_layer(firstOutput)
+print(outputs.summary())
 outputs = tf.keras.layers.Activation('linear', dtype='float32')(outputs) #identitiy function to increase computing w/ mixedfloat16
 
 model = tf.keras.Model(inputs, outputs)
