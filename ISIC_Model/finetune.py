@@ -31,9 +31,9 @@ train_dataset = tf.keras.utils.image_dataset_from_directory(train_dir, shuffle=T
 validation_dataset = tf.keras.utils.image_dataset_from_directory(validation_dir, shuffle=True, batch_size=BATCH_SIZE, image_size=IMG_SIZE)
 
 firstModel = tf.keras.models.load_model('machine.h5')
-print(firstModel.summary())
+#print(firstModel.summary())
 oldModel = tf.keras.models.load_model('../unstandardized_Model/machineFineTune.h5')
-print(oldModel.summary())
+#print(oldModel.summary())
 base_model = tf.keras.models.load_model('../unstandardized_Model/fineTunedBase.h5')
 
 
@@ -51,7 +51,7 @@ global_average_layer = tf.keras.layers.GlobalAveragePooling2D()
 oldPrediction = tf.keras.models.Sequential(oldModel.layers[len(oldModel.layers) - 2]) #Previous classification head
 oldPrediction.trainable = True #Just training new classification head
 prediction_layer = tf.keras.models.Sequential(firstModel.layers[len(firstModel.layers) - 2]) #Fully connected layer, getting new prediction of benign or malignant
-
+print(prediction_layer.summary())
 
 data_augmentation = tf.keras.Sequential([
   tf.keras.layers.RandomFlip('horizontal'),
