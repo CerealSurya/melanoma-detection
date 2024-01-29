@@ -31,12 +31,12 @@ train_dataset = tf.keras.utils.image_dataset_from_directory(train_dir, shuffle=T
 validation_dataset = tf.keras.utils.image_dataset_from_directory(validation_dir, shuffle=True, batch_size=BATCH_SIZE, image_size=IMG_SIZE)
 
 firstModel = tf.keras.models.load_model('machine.h5')
+print(firstModel.summary())
 oldModel = tf.keras.models.load_model('../unstandardized_Model/machineFineTune.h5')
-
+print(oldModel.summary())
 base_model = tf.keras.models.load_model('../unstandardized_Model/fineTunedBase.h5')
 
-print(len(base_model.layers))
-print(base_model.summary())
+
 # Fine-tune from this layer onwards
 fine_tune_at = 17
 # Freeze all the layers before the `fine_tune_at` layer
