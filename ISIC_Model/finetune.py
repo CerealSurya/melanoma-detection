@@ -48,9 +48,9 @@ image_batch, label_batch = next(iter(train_dataset)) #Utilizes keras api to get 
 feature_batch = base_model(image_batch) # Gets the features (inputs of the layers) of the model from passing in the images
 global_average_layer = tf.keras.layers.GlobalAveragePooling2D() 
 #prediction_layer = tf.keras.layers.Dense(1, activation="sigmoid") #Fully connected layer, getting prediction
-oldPrediction = tf.keras.models.Sequential(oldModel.layers[len(oldModel.layers) - 1]) #Previous classification head
+oldPrediction = tf.keras.models.Sequential(oldModel.layers[len(oldModel.layers) - 2]) #Previous classification head
 oldPrediction.trainable = True #Just training new classification head
-prediction_layer = tf.keras.models.Sequential(firstModel.layers[len(firstModel.layers) - 1]) #Fully connected layer, getting new prediction of benign or malignant
+prediction_layer = tf.keras.models.Sequential(firstModel.layers[len(firstModel.layers) - 2]) #Fully connected layer, getting new prediction of benign or malignant
 
 
 data_augmentation = tf.keras.Sequential([
