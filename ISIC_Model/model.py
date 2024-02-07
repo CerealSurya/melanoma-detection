@@ -1,8 +1,8 @@
 import tensorflow as tf 
 import numpy as np
-import os 
 from matplotlib import pyplot as plt
 from tensorflow.keras import optimizers
+from keras.saving import saving_lib
 from tensorflow.keras.preprocessing import image
 from tensorflow.keras.preprocessing.image import ImageDataGenerator 
 from tensorflow.python.keras.optimizer_v2.rmsprop import RMSprop 
@@ -12,6 +12,20 @@ from keras.callbacks import CSVLogger
 Benign: 37574
 Malignant: 6857
 """
+@tf.keras.saving.register_keras_serializable(name="weighted_binary_crossentropy")
+def weighted_binary_crossentropy(target, output, weights):
+  target = tf.convert_to_tensor(target)
+  output = tf.convert_to_tensor(output)
+  weights = tf.convert_to_tensor(weights, dtype=target.dtype)
+
+  epsilon_ = tf.constant(tf.keras.backend.epsilon(), output.dtype.base_dtype)
+  output = tf.clip_by_value(output, epsilon_, 1.0 - epsilon_)
+
+  # Compute cross entropy from probabilities.
+  bce = weights[1] * target * tf.math.log(output + epsilon_)
+  bce += weights[0] * (1 - target) * tf.math.log(1 - output + epsilon_)
+  return -bce
+
 @tf.keras.saving.register_keras_serializable(name="WeightedBinaryCrossentropy")
 class WeightedBinaryCrossentropy:
     def __init__(
@@ -135,12 +149,12 @@ model = tf.keras.Model(inputs, outputs)
 print(model.summary())
 base_learning_rate = 0.00001
 
-wbce = WeightedBinaryCrossentropy(weights = [6.48, 1.18])
-wbce(inputs,outputs)
+# wbce = WeightedBinaryCrossentropy(weights = [6.48, 1.18])
+# wbce(inputs,outputs)
 callback = tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=2)
 
 #,loss=tf.keras.losses.BinaryCrossentropy(from_logits=True)
-model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=base_learning_rate), metrics=[tf.keras.metrics.BinaryAccuracy(threshold=0, name='accuracy'), tf.keras.metrics.AUC(name="AUC")])
+model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=base_learning_rate), loss = weighted_binary_crossentropy(weights=[6.48, 1.18]), metrics=[tf.keras.metrics.BinaryAccuracy(threshold=0, name='accuracy'), tf.keras.metrics.AUC(name="AUC")])
 
 
 model.fit(train_dataset, epochs=5, validation_data=validation_dataset, callbacks=[callback])
