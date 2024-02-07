@@ -10,8 +10,69 @@ from keras.callbacks import CSVLogger
 
 """Split: 
 Benign: 37574
-Malignant: 1697
+Malignant: 6857
 """
+@tf.keras.saving.register_keras_serializable(name="WeightedBinaryCrossentropy")
+class WeightedBinaryCrossentropy:
+    def __init__(
+        self,
+        label_smoothing=0.0,
+        weights = [1.0, 1.0],
+        axis=-1,
+        name="weighted_binary_crossentropy",
+        fn = None,
+    ):
+        """Initializes `WeightedBinaryCrossentropy` instance.
+        Args:
+          from_logits: Whether to interpret `y_pred` as a tensor of
+            [logit](https://en.wikipedia.org/wiki/Logit) values. By default, we
+            assume that `y_pred` contains probabilities (i.e., values in [0,
+            1]).
+          label_smoothing: Float in [0, 1]. When 0, no smoothing occurs. When >
+            0, we compute the loss between the predicted labels and a smoothed
+            version of the true labels, where the smoothing squeezes the labels
+            towards 0.5.  Larger values of `label_smoothing` correspond to
+            heavier smoothing.
+          axis: The axis along which to compute crossentropy (the features
+            axis).  Defaults to -1.
+          name: Name for the op. Defaults to 'weighted_binary_crossentropy'.
+        """
+        super().__init__()
+        self.weights = weights # tf.convert_to_tensor(weights)
+        self.label_smoothing = label_smoothing
+        self.name = name
+        self.fn = weighted_binary_crossentropy if fn is None else fn
+
+    def __call__(self, y_true, y_pred):
+        y_pred = tf.convert_to_tensor(y_pred)
+        y_true = tf.cast(y_true, y_pred.dtype)
+        self.label_smoothing = tf.convert_to_tensor(self.label_smoothing, dtype=y_pred.dtype)
+
+        def _smooth_labels():
+            return y_true * (1.0 - self.label_smoothing) + 0.5 * self.label_smoothing
+
+        y_true = tf.__internal__.smart_cond.smart_cond(self.label_smoothing, _smooth_labels, lambda: y_true)
+
+        return tf.reduce_mean(self.fn(y_true, y_pred, self.weights),axis=-1)
+    
+    def get_config(self):
+        config = {"name": self.name, "weights": self.weights, "fn": self.fn}
+
+        # base_config = super().get_config()
+        return dict(list(config.items()))
+
+    @classmethod
+    def from_config(cls, config):
+        """Instantiates a `Loss` from its config (output of `get_config()`).
+        Args:
+            config: Output of `get_config()`.
+        """
+        if saving_lib.saving_v3_enabled():
+            fn_name = config.pop("fn", None)
+            if fn_name:
+                config["fn"] = get(fn_name)
+        return cls(**config)
+
 tf.keras.mixed_precision.set_global_policy('mixed_float16')
 
 print("Num GPUs Available: ", tf.config.list_physical_devices())
@@ -49,7 +110,7 @@ global_average_layer = tf.keras.layers.GlobalAveragePooling2D()
 #prediction_layer = tf.keras.layers.Dense(1, activation="sigmoid") #Fully connected layer, getting prediction
 # oldPrediction = tf.keras.models.Sequential(oldModel.layers[len(oldModel.layers) - 1]) #Previous classification head
 # oldPrediction.trainable = False #Just training new classification head
-prediction_layer = tf.keras.layers.Dense(1, activation="sigmoid") #Fully connected layer, getting new prediction of benign or malignant
+prediction_layer = tf.keras.layers.Dense(1) #Fully connected layer, getting new prediction of benign or malignant
 
 
 data_augmentation = tf.keras.Sequential([
@@ -73,9 +134,13 @@ outputs = tf.keras.layers.Activation('linear', dtype='float32')(outputs) #identi
 model = tf.keras.Model(inputs, outputs)
 print(model.summary())
 base_learning_rate = 0.00001
+
+wbce = WeightedBinaryCrossentropy(weights = [6.48, 1.18])
+wbce(inputs,outputs)
 callback = tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=2)
 
-model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=base_learning_rate),loss=tf.keras.losses.BinaryCrossentropy(from_logits=False), metrics=[tf.keras.metrics.BinaryAccuracy(threshold=0, name='accuracy'), tf.keras.metrics.AUC(name="AUC")])
+#,loss=tf.keras.losses.BinaryCrossentropy(from_logits=True)
+model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=base_learning_rate), metrics=[tf.keras.metrics.BinaryAccuracy(threshold=0, name='accuracy'), tf.keras.metrics.AUC(name="AUC")])
 
 
 model.fit(train_dataset, epochs=5, validation_data=validation_dataset, callbacks=[callback])
