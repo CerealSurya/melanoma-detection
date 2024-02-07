@@ -154,7 +154,7 @@ base_learning_rate = 0.00001
 callback = tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=2)
 
 #,loss=tf.keras.losses.BinaryCrossentropy(from_logits=True)
-model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=base_learning_rate), loss = weighted_binary_crossentropy(weights=[6.48, 1.18]), metrics=[tf.keras.metrics.BinaryAccuracy(threshold=0, name='accuracy'), tf.keras.metrics.AUC(name="AUC")])
+model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=base_learning_rate), loss = weighted_binary_crossentropy(inputs, outputs, weights=[6.48, 1.18]), metrics=[tf.keras.metrics.BinaryAccuracy(threshold=0, name='accuracy'), tf.keras.metrics.AUC(name="AUC")])
 
 
 model.fit(train_dataset, epochs=5, validation_data=validation_dataset, callbacks=[callback])
