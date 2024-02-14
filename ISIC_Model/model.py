@@ -124,7 +124,7 @@ global_average_layer = tf.keras.layers.GlobalAveragePooling2D()
 #prediction_layer = tf.keras.layers.Dense(1, activation="sigmoid") #Fully connected layer, getting prediction
 # oldPrediction = tf.keras.models.Sequential(oldModel.layers[len(oldModel.layers) - 1]) #Previous classification head
 # oldPrediction.trainable = False #Just training new classification head
-prediction_layer = tf.keras.layers.Dense(1, bias_initializer= np.log(37574/6857)) #Fully connected layer, getting new prediction of benign or malignant
+prediction_layer = tf.keras.layers.Dense(1, bias_initializer= [np.log(37574/6857)]) #Fully connected layer, getting new prediction of benign or malignant
 
 
 data_augmentation = tf.keras.Sequential([
