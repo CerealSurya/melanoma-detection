@@ -124,7 +124,7 @@ global_average_layer = tf.keras.layers.GlobalAveragePooling2D()
 #prediction_layer = tf.keras.layers.Dense(1, activation="sigmoid") #Fully connected layer, getting prediction
 # oldPrediction = tf.keras.models.Sequential(oldModel.layers[len(oldModel.layers) - 1]) #Previous classification head
 # oldPrediction.trainable = False #Just training new classification head
-prediction_layer = tf.keras.layers.Dense(1) #Fully connected layer, getting new prediction of benign or malignant
+prediction_layer = tf.keras.layers.Dense(1, bias_initializer= np.log(37574/6857)) #Fully connected layer, getting new prediction of benign or malignant
 
 
 data_augmentation = tf.keras.Sequential([
@@ -153,8 +153,8 @@ base_learning_rate = 0.00001
 # wbce(inputs,outputs)
 callback = tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=2)
 
-#,loss=tf.keras.losses.BinaryCrossentropy(from_logits=True)
-model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=base_learning_rate), loss = weighted_binary_crossentropy(inputs, outputs, weights=[6.48, 1.18]), metrics=[tf.keras.metrics.BinaryAccuracy(threshold=0, name='accuracy'), tf.keras.metrics.AUC(name="AUC")])
+#weighted_binary_crossentropy(inputs, outputs, weights=[6.48, 1.18]) loss=tf.keras.losses.BinaryCrossentropy(from_logits=True)
+model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=base_learning_rate), loss = tf.keras.losses.BinaryCrossentropy(from_logits=True), metrics=[tf.keras.metrics.BinaryAccuracy(threshold=0, name='accuracy'), tf.keras.metrics.AUC(name="AUC")])
 
 
 model.fit(train_dataset, epochs=5, validation_data=validation_dataset, callbacks=[callback])
