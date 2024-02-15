@@ -8,84 +8,30 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.python.keras.optimizer_v2.rmsprop import RMSprop 
 from keras.callbacks import CSVLogger
 
+#TODO: Downsample benign class by x%
 """Split: 
 Benign: 37574
 Malignant: 6857
 """
-@tf.keras.saving.register_keras_serializable(name="weighted_binary_crossentropy")
-def weighted_binary_crossentropy(target, output, weights):
-  target = tf.convert_to_tensor(target)
-  output = tf.convert_to_tensor(output)
-  weights = tf.convert_to_tensor(weights, dtype=target.dtype)
+totalData = 37574
+benign = 37574
+malignant = 6857
 
-  epsilon_ = tf.constant(tf.keras.backend.epsilon(), output.dtype.base_dtype)
-  output = tf.clip_by_value(output, epsilon_, 1.0 - epsilon_)
+# @tf.keras.saving.register_keras_serializable(name="weighted_binary_crossentropy")
+# def weighted_binary_crossentropy(target, output, weights):
+#   target = tf.convert_to_tensor(target)
+#   output = tf.convert_to_tensor(output)
+#   weights = tf.convert_to_tensor(weights, dtype=target.dtype)
 
-  # Compute cross entropy from probabilities.
-  bce = weights[1] * target * tf.math.log(output + epsilon_)
-  bce += weights[0] * (1 - target) * tf.math.log(1 - output + epsilon_)
-  return -bce
+#   epsilon_ = tf.constant(tf.keras.backend.epsilon(), output.dtype.base_dtype)
+#   output = tf.clip_by_value(output, epsilon_, 1.0 - epsilon_)
 
-# @tf.keras.saving.register_keras_serializable(name="WeightedBinaryCrossentropy")
-# class WeightedBinaryCrossentropy:
-#     def __init__(
-#         self,
-#         label_smoothing=0.0,
-#         weights = [1.0, 1.0],
-#         axis=-1,
-#         name="weighted_binary_crossentropy",
-#         fn = None,
-#     ):
-#         """Initializes `WeightedBinaryCrossentropy` instance.
-#         Args:
-#           from_logits: Whether to interpret `y_pred` as a tensor of
-#             [logit](https://en.wikipedia.org/wiki/Logit) values. By default, we
-#             assume that `y_pred` contains probabilities (i.e., values in [0,
-#             1]).
-#           label_smoothing: Float in [0, 1]. When 0, no smoothing occurs. When >
-#             0, we compute the loss between the predicted labels and a smoothed
-#             version of the true labels, where the smoothing squeezes the labels
-#             towards 0.5.  Larger values of `label_smoothing` correspond to
-#             heavier smoothing.
-#           axis: The axis along which to compute crossentropy (the features
-#             axis).  Defaults to -1.
-#           name: Name for the op. Defaults to 'weighted_binary_crossentropy'.
-#         """
-#         super().__init__()
-#         self.weights = weights # tf.convert_to_tensor(weights)
-#         self.label_smoothing = label_smoothing
-#         self.name = name
-#         self.fn = weighted_binary_crossentropy if fn is None else fn
+#   # Compute cross entropy from probabilities.
+#   bce = weights[1] * target * tf.math.log(output + epsilon_)
+#   bce += weights[0] * (1 - target) * tf.math.log(1 - output + epsilon_)
+#   return -bce
 
-#     def __call__(self, y_true, y_pred):
-#         y_pred = tf.convert_to_tensor(y_pred)
-#         y_true = tf.cast(y_true, y_pred.dtype)
-#         self.label_smoothing = tf.convert_to_tensor(self.label_smoothing, dtype=y_pred.dtype)
 
-#         def _smooth_labels():
-#             return y_true * (1.0 - self.label_smoothing) + 0.5 * self.label_smoothing
-
-#         y_true = tf.__internal__.smart_cond.smart_cond(self.label_smoothing, _smooth_labels, lambda: y_true)
-
-#         return tf.reduce_mean(self.fn(y_true, y_pred, self.weights),axis=-1)
-    
-#     def get_config(self):
-#         config = {"name": self.name, "weights": self.weights, "fn": self.fn}
-
-#         # base_config = super().get_config()
-#         return dict(list(config.items()))
-
-#     @classmethod
-#     def from_config(cls, config):
-#         """Instantiates a `Loss` from its config (output of `get_config()`).
-#         Args:
-#             config: Output of `get_config()`.
-#         """
-#         if saving_lib.saving_v3_enabled():
-#             fn_name = config.pop("fn", None)
-#             if fn_name:
-#                 config["fn"] = get(fn_name)
-#         return cls(**config)
 
 tf.keras.mixed_precision.set_global_policy('mixed_float16')
 
@@ -111,19 +57,13 @@ base_model = tf.keras.models.load_model('../unstandardized_Model/fineTunedBase.h
 base_model.trainable = False
 print(len(base_model.layers))
 print(base_model.summary())
-# # Fine-tune from this layer onwards
-# fine_tune_at = 16
-# # Freeze all the layers before the `fine_tune_at` layer
-# for layer in base_model.layers[:fine_tune_at]:
-#   layer.trainable = False
+
 
 #https://www.tensorflow.org/tutorials/images/transfer_learning
 image_batch, label_batch = next(iter(train_dataset)) #Utilizes keras api to get the images and labels separated
 feature_batch = base_model(image_batch) # Gets the features (inputs of the layers) of the model from passing in the images
 global_average_layer = tf.keras.layers.GlobalAveragePooling2D() 
-#prediction_layer = tf.keras.layers.Dense(1, activation="sigmoid") #Fully connected layer, getting prediction
-# oldPrediction = tf.keras.models.Sequential(oldModel.layers[len(oldModel.layers) - 1]) #Previous classification head
-# oldPrediction.trainable = False #Just training new classification head
+
 prediction_layer = tf.keras.layers.Dense(1, bias_initializer=tf.constant_initializer(np.log(37574/6857))) #Fully connected layer, getting new prediction of benign or malignant
 
 
@@ -149,12 +89,22 @@ model = tf.keras.Model(inputs, outputs)
 print(model.summary())
 base_learning_rate = 0.00001
 
-# wbce = WeightedBinaryCrossentropy(weights = [6.48, 1.18])
-# wbce(inputs,outputs)
+# Scaling by total/2 helps keep the loss to a similar magnitude.
+# The sum of the weights of all examples stays the same.
+weight_for_0 = (1 / benign) * (totalData / 2.0) #Zero class should be ordered alphabetically
+weight_for_1 = (1 / malignant) * (totalData / 2.0)
+
+weights = {0: weight_for_0, 1: weight_for_1}
+
 callback = tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=2)
 
 #weighted_binary_crossentropy(inputs, outputs, weights=[6.48, 1.18]) loss=tf.keras.losses.BinaryCrossentropy(from_logits=True)
-model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=base_learning_rate), loss = tf.keras.losses.BinaryCrossentropy(from_logits=True), metrics=[tf.keras.metrics.BinaryAccuracy(threshold=0, name='accuracy'), tf.keras.metrics.AUC(name="AUC")])
+model.compile(
+    optimizer=tf.keras.optimizers.Adam(learning_rate=base_learning_rate), 
+    loss = tf.keras.losses.BinaryCrossentropy(from_logits=True), 
+    metrics=[tf.keras.metrics.BinaryAccuracy(threshold=0, name='accuracy'), 
+             tf.keras.metrics.AUC(name="AUC")],
+    class_weight = weights)
 
 
 model.fit(train_dataset, epochs=5, validation_data=validation_dataset, callbacks=[callback])

@@ -12,6 +12,10 @@ from keras.callbacks import CSVLogger
 Benign: 37574
 Malignant: 1697
 """
+totalData = 37574
+benign = 37574
+malignant = 6857
+
 tf.keras.mixed_precision.set_global_policy('mixed_float16')
 
 print("Num GPUs Available: ", tf.config.list_physical_devices())
@@ -21,7 +25,9 @@ configproto.gpu_options.allow_growth = True
 sess = tf.compat.v1.Session(config=configproto) 
 tf.compat.v1.keras.backend.set_session(sess)
 
-BATCH_SIZE = 2
+BATCH_SIZE = 2 #Might need to reduce to run the training
+#TODO: https://www.abstractapi.com/guides/python-compress-image#:~:text=The%20easiest%20way%20to%20lower,and%20a%20smaller%20file%20size.
+# ^^^^ compress the images before hand to a more dealable resolution. 
 IMG_SIZE = (224, 224)
 preprocess_input = tf.keras.applications.vgg16.preprocess_input
 
@@ -77,8 +83,17 @@ print(model.summary())
 base_learning_rate = 0.00001
 callback = tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=2)
 
-model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=base_learning_rate),loss=tf.keras.losses.BinaryCrossentropy(from_logits=False), metrics=[tf.keras.metrics.BinaryAccuracy(threshold=0, name='accuracy'), tf.keras.metrics.AUC(name="AUC")])
+weight_for_0 = (1 / benign) * (totalData / 2.0)
+weight_for_1 = (1 / malignant) * (totalData / 2.0)
 
+weights = {0: weight_for_0, 1: weight_for_1}
+
+model.compile(
+    optimizer=tf.keras.optimizers.Adam(learning_rate=base_learning_rate), 
+    loss = tf.keras.losses.BinaryCrossentropy(from_logits=True), 
+    metrics=[tf.keras.metrics.BinaryAccuracy(threshold=0, name='accuracy'), 
+             tf.keras.metrics.AUC(name="AUC")],
+    class_weight = weights)
 
 model.fit(train_dataset, epochs=20, validation_data=validation_dataset, callbacks=[callback])
 model.save('machine.h5')
