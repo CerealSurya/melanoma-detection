@@ -30,7 +30,7 @@ BATCH_SIZE = 2 #Might need to reduce to run the training
 IMG_SIZE = (224, 224)
 preprocess_input = tf.keras.applications.vgg16.preprocess_input
 
-train_dir = "combinedDataset/train"
+train_dir = "combinedDataset/Newtrain"
 validation_dir = "combinedDataset/test"
 train_dataset = tf.keras.utils.image_dataset_from_directory(train_dir, shuffle=True, batch_size=BATCH_SIZE, image_size=IMG_SIZE)
 validation_dataset = tf.keras.utils.image_dataset_from_directory(validation_dir, shuffle=True, batch_size=BATCH_SIZE, image_size=IMG_SIZE)
