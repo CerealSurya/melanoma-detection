@@ -107,5 +107,5 @@ model.compile(
     )
 
 
-model.fit(train_dataset, epochs=5, validation_data=validation_dataset, callbacks=[callback], class_weight = weights)
+model.fit(train_dataset, epochs=10, validation_data=validation_dataset, callbacks=[callback], class_weight = weights)
 model.save('machine.h5')
