@@ -26,8 +26,7 @@ sess = tf.compat.v1.Session(config=configproto)
 tf.compat.v1.keras.backend.set_session(sess)
 
 BATCH_SIZE = 2 #Might need to reduce to run the training
-#TODO: https://www.abstractapi.com/guides/python-compress-image#:~:text=The%20easiest%20way%20to%20lower,and%20a%20smaller%20file%20size.
-# ^^^^ compress the images before hand to a more dealable resolution. 
+
 IMG_SIZE = (224, 224)
 preprocess_input = tf.keras.applications.vgg16.preprocess_input
 
@@ -92,8 +91,8 @@ model.compile(
     optimizer=tf.keras.optimizers.Adam(learning_rate=base_learning_rate), 
     loss = tf.keras.losses.BinaryCrossentropy(from_logits=True), 
     metrics=[tf.keras.metrics.BinaryAccuracy(threshold=0, name='accuracy'), 
-             tf.keras.metrics.AUC(name="AUC")],
-    class_weight = weights)
+             tf.keras.metrics.AUC(name="AUC")]
+    )
 
-model.fit(train_dataset, epochs=20, validation_data=validation_dataset, callbacks=[callback])
-model.save('machine.h5')
+model.fit(train_dataset, epochs=20, validation_data=validation_dataset, callbacks=[callback], class_weight = weights)
+model.save('machineFineTune.h5')
