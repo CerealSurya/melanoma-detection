@@ -4,7 +4,7 @@ from os import listdir
 path = "combinedDataset/train/benign/"
 benign = [f for f in listdir(path)]
 
-imgs = ["png", "jpg", "jpeg"]
+imgs = ["png", "jpg", "peg"]
 for img in benign:
     if img[len(img) - 3:] not in imgs:
         continue
