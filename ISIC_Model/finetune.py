@@ -94,5 +94,5 @@ model.compile(
              tf.keras.metrics.AUC(name="AUC")]
     )
 
-model.fit(train_dataset, epochs=20, validation_data=validation_dataset, callbacks=[callback], class_weight = weights)
+model.fit(train_dataset, epochs=20, validation_data=validation_dataset, callbacks=[callback])
 model.save('machineFineTune.h5')
