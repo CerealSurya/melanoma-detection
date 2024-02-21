@@ -96,7 +96,7 @@ weight_for_1 = (1 / malignant) * (totalData / 2.0)
 
 weights = {0: weight_for_0, 1: weight_for_1}
 
-callback = tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=2)
+callback = tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=3)
 
 #weighted_binary_crossentropy(inputs, outputs, weights=[6.48, 1.18]) loss=tf.keras.losses.BinaryCrossentropy(from_logits=True)
 model.compile(
