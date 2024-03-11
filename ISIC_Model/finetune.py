@@ -10,11 +10,12 @@ from keras.callbacks import CSVLogger
 
 """Split: 
 Benign: 37574
-Malignant: 1697
+Malignant: 6857
 """
-totalData = 37574
-benign = 37574
-malignant = 6857
+totalData = 44375
+benign = 37572
+malignant = 6803
+
 
 tf.keras.mixed_precision.set_global_policy('mixed_float16')
 

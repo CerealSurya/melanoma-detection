@@ -8,14 +8,14 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.python.keras.optimizer_v2.rmsprop import RMSprop 
 from keras.callbacks import CSVLogger
 
-#TODO: Downsample benign class by x%
+
 """Split: 
 Benign: 37574
 Malignant: 6857
 """
-totalData = 37574
-benign = 37574
-malignant = 6857
+totalData = 44375
+benign = 37572
+malignant = 6803
 
 # @tf.keras.saving.register_keras_serializable(name="weighted_binary_crossentropy")
 # def weighted_binary_crossentropy(target, output, weights):
@@ -64,7 +64,7 @@ image_batch, label_batch = next(iter(train_dataset)) #Utilizes keras api to get 
 feature_batch = base_model(image_batch) # Gets the features (inputs of the layers) of the model from passing in the images
 global_average_layer = tf.keras.layers.GlobalAveragePooling2D() 
 
-prediction_layer = tf.keras.layers.Dense(1, bias_initializer=tf.constant_initializer(np.log(37574/6857)), kernel_regularizer=tf.keras.regularizers.l1(0.01)) #Fully connected layer, getting new prediction of benign or malignant
+prediction_layer = tf.keras.layers.Dense(1, bias_initializer=tf.constant_initializer(np.log(benign/malignant)), kernel_regularizer=tf.keras.regularizers.l1(0.01)) #Fully connected layer, getting new prediction of benign or malignant
 
 
 data_augmentation = tf.keras.Sequential([
