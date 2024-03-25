@@ -1,6 +1,6 @@
 import tensorflow as tf 
 import numpy as np
-from sklearn.metrics import roc_curve, auc, classification_report
+from sklearn.metrics import roc_curve, auc, recall_score
 from matplotlib import pyplot as plt
 import sys
 
@@ -36,22 +36,26 @@ print("Total Predictions: ", len(predictions))
 fpr_keras, tpr_keras, thresholds_keras = roc_curve(labels, predictions)
 auc_keras = auc(fpr_keras, tpr_keras)
 
+sensitivityAvg = 0
+for i in tpr_keras:
+    sensitivityAvg += i
+sensitivityAvg /= len(tpr_keras)
 
+print(f"Sensitivity: {sensitivityAvg}")
+specificity = recall_score(labels, predictions, pos_label=0)
+print(f"Specificity: {specificity}")
 
-print(fpr_keras, "\nbreak\n")
-print(tpr_keras, "\nbreak\n")
-print(thresholds_keras, "\nbreak\n")
-print("AUC: ", auc_keras, "\nbreak\n")
+# print(fpr_keras, "\nbreak\n")
+# print(tpr_keras, "\nbreak\n")
+# print(thresholds_keras, "\nbreak\n")
+# print("AUC: ", auc_keras, "\nbreak\n")
 
-with open("fpr.txt", "w") as f:
-    for i in fpr_keras:
-        f.write(str(i) + "\n")
-with open("tpr.txt", "w") as f:
-    for i in tpr_keras:
-        f.write(str(i) + "\n")
-with open("thresholds.txt", "w") as f:
-    for i in thresholds_keras:
-        f.write(str(i) + "\n")
-
-report = classification_report(labels, predictions, output_dict=True)
-print(report)
+# with open("fpr.txt", "w") as f:
+#     for i in fpr_keras:
+#         f.write(str(i) + "\n")
+# with open("tpr.txt", "w") as f:
+#     for i in tpr_keras:
+#         f.write(str(i) + "\n")
+# with open("thresholds.txt", "w") as f:
+#     for i in thresholds_keras:
+#         f.write(str(i) + "\n")
