@@ -92,6 +92,7 @@ base_learning_rate = 0.00001
 # Scaling by total/2 helps keep the loss to a similar magnitude.
 # The sum of the weights of all examples stays the same.
 weight_for_0 = (1 / benign) * (totalData / 2.0) #Zero class should be ordered alphabetically
+                                #Should this be total data or the other class / 2
 weight_for_1 = (1 / malignant) * (totalData / 2.0)
 
 weights = {0: weight_for_0, 1: weight_for_1}

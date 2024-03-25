@@ -1,6 +1,6 @@
 import tensorflow as tf 
 import numpy as np
-from sklearn.metrics import roc_curve, auc
+from sklearn.metrics import roc_curve, auc, classification_report
 from matplotlib import pyplot as plt
 import sys
 
@@ -35,6 +35,9 @@ print("Total Predictions: ", len(predictions))
 
 fpr_keras, tpr_keras, thresholds_keras = roc_curve(labels, predictions)
 auc_keras = auc(fpr_keras, tpr_keras)
+
+
+
 print(fpr_keras, "\nbreak\n")
 print(tpr_keras, "\nbreak\n")
 print(thresholds_keras, "\nbreak\n")
@@ -50,22 +53,5 @@ with open("thresholds.txt", "w") as f:
     for i in thresholds_keras:
         f.write(str(i) + "\n")
 
-plt.figure(1)
-plt.plot([0, 1], [0, 1], 'k--')
-plt.plot(fpr_keras, tpr_keras, label='Keras (area = {:.3f})'.format(auc_keras))
-plt.xlabel('False positive rate')
-plt.ylabel('True positive rate')
-plt.title('ROC curve')
-plt.legend(loc='best')
-plt.show()
-# Zoom in view of the upper left corner.
-plt.figure(2)
-plt.xlim(0, 0.2)
-plt.ylim(0.8, 1)
-plt.plot([0, 1], [0, 1], 'k--')
-plt.plot(fpr_keras, tpr_keras, label='Keras (area = {:.3f})'.format(auc_keras))
-plt.xlabel('False positive rate')
-plt.ylabel('True positive rate')
-plt.title('ROC curve (zoomed in at top left)')
-plt.legend(loc='best')
-plt.show()
+report = classification_report(labels, predictions, output_dict=True)
+print(report)
