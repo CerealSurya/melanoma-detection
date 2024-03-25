@@ -1,6 +1,6 @@
 import tensorflow as tf 
 import numpy as np
-from sklearn.metrics import roc_curve, auc, recall_score
+from sklearn.metrics import roc_curve, auc, recall_score, confusion_matrix
 from matplotlib import pyplot as plt
 import sys
 
@@ -42,8 +42,10 @@ for i in tpr_keras:
 sensitivityAvg /= len(tpr_keras)
 
 print(f"Sensitivity: {sensitivityAvg}")
-specificity = recall_score(labels, predictions, pos_label=0)
-print(f"Specificity: {specificity}")
+# specificity = recall_score(labels, predictions, pos_label=0)
+# print(f"Specificity: {specificity}")
+tn, fp, fn, tp = confusion_matrix(labels, predictions).ravel()
+specificity = tn / (tn+fp)
 
 # print(fpr_keras, "\nbreak\n")
 # print(tpr_keras, "\nbreak\n")
