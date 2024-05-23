@@ -37,7 +37,7 @@ def show_examples(x):
         plt.imshow(img)
         plt.axis('off')
 
-show_examples(X_train)
+#show_examples(X_train)
 def forward_noise(x, t):
     a = time_bar[t]      # base on t
     b = time_bar[t + 1]  # image for t + 1
@@ -140,7 +140,7 @@ def predict(x_idx=None):
         x = model.predict([x, np.full((32), t)], verbose=0)
     show_examples(x)
 
-predict()
+#predict()
 def predict_step():
     xs = []
     x = np.random.normal(size=(8, IMG_SIZE, IMG_SIZE, 3))
@@ -158,7 +158,7 @@ def predict_step():
         plt.title(f'{i}')
         plt.axis('off')
 
-predict_step()
+#predict_step()
 def train_one(x_img):
     x_ts = generate_ts(len(x_img))
     x_a, x_b = forward_noise(x_img, x_ts)
