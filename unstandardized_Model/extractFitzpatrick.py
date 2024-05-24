@@ -2,7 +2,7 @@ import pandas as pd
 import urllib.request 
 from PIL import Image 
 
-df = pd.read_csv("initialDataset/lesion_NotPresent/fitzpatrick17k.csv")
+df = pd.read_csv("initialDataset/train/lesion_NotPresent/fitzpatrick17k.csv")
 df = df.reset_index()
 
 opener=urllib.request.build_opener()
