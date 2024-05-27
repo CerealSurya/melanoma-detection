@@ -13,11 +13,11 @@ import os
 
 # Define image size and batch size
 image_size = (224, 224)
-batch_size = 32
+batch_size = 16
 
 # Create data generator for loading images
 datagen = ImageDataGenerator(rescale=1.0/255.0)
-data_path = 'path/to/your/single/class/data'
+data_path = './dataset/HAM10000_images_part_1'
 train_gen = datagen.flow_from_directory(
     data_path,
     target_size=image_size,
@@ -139,5 +139,5 @@ diffusion_model.train(train_gen, epochs)
 # 4. Evaluate and Save the Model
 unet.save('gen.h5')
 
-samples = diffusion_model.sample(num_samples=5)
-display_samples(samples)
+# samples = diffusion_model.sample(num_samples=5)
+# display_samples(samples)
