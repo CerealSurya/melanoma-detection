@@ -16,15 +16,26 @@ image_size = (224, 224)
 batch_size = 8
 
 # Create data generator for loading images
-datagen = ImageDataGenerator(rescale=1.0/255.0)
-data_path = './dataset/HAM10000_images_part_1'
-train_gen = datagen.flow_from_directory(
-    data_path,
-    target_size=image_size,
-    batch_size=batch_size,
-    class_mode=None,
-    shuffle=True
-)
+def preprocess_image(image):
+    image = tf.image.resize(image, image_size)  # Resize the image
+    image = image / 255.0  # Scale the image pixels to range [0, 1]
+    return image
+
+# Function to load images from a directory
+def load_and_preprocess_image(file_path):
+    image = tf.io.read_file(file_path)
+    image = tf.image.decode_jpeg(image, channels=3)
+    return preprocess_image(image)
+
+data_path = 'dataset/HAM10000_images_part_1'
+file_pattern = data_path + '/*.jpg'  # Adjust the pattern based on your image format
+file_paths = tf.data.Dataset.list_files(file_pattern)
+
+# Apply the loading and preprocessing functions
+dataset = file_paths.map(load_and_preprocess_image, num_parallel_calls=tf.data.experimental.AUTOTUNE)
+
+# Batch the dataset
+dataset = dataset.batch(batch_size).prefetch(tf.data.experimental.AUTOTUNE)
 
 # 2. Define the Model
 
@@ -88,10 +99,10 @@ unet = build_unet(input_shape)
 
 # Define diffusion model parameters and training loop
 class DiffusionModel:
-    def __init__(self, model, timesteps=1000):
+    def __init__(self, model, timesteps=100):
         self.model = model
         self.timesteps = timesteps
-        self.optimizer = tf.keras.optimizers.Adam(learning_rate=0.001)
+        self.optimizer = tf.keras.optimizers.Adam(learning_rate=0.00001)
         self.loss_fn = tf.keras.losses.MeanSquaredError()
     
     def train_step(self, x):
@@ -100,10 +111,10 @@ class DiffusionModel:
             noisy_images = x + noise
             reconstructed_images = self.model(noisy_images, training=True)
             loss = self.loss_fn(x, reconstructed_images)
+            #tape.watch(reconstructed_images)
         
         gradients = tape.gradient(loss, self.model.trainable_variables)
         self.optimizer.apply_gradients(zip(gradients, self.model.trainable_variables))
-        print(f"Loss: {loss.numpy()}")
         if np.all(gradients == 0):
             print("Warning: All gradients are zero.")
 
@@ -137,8 +148,8 @@ def display_samples(samples):
 
 # 3. Train the Model
 diffusion_model = DiffusionModel(unet)
-epochs = 10  # Number of training epochs
-diffusion_model.train(train_gen, epochs)
+epochs = 100  # Number of training epochs
+diffusion_model.train(dataset, epochs)
 
 # 4. Evaluate and Save the Model
 unet.save('gen.h5')
