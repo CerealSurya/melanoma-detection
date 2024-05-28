@@ -13,7 +13,7 @@ import os
 
 # Define image size and batch size
 image_size = (224, 224)
-batch_size = 16
+batch_size = 8
 
 # Create data generator for loading images
 datagen = ImageDataGenerator(rescale=1.0/255.0)
@@ -91,7 +91,7 @@ class DiffusionModel:
     def __init__(self, model, timesteps=1000):
         self.model = model
         self.timesteps = timesteps
-        self.optimizer = tf.keras.optimizers.Adam(learning_rate=2e-5)
+        self.optimizer = tf.keras.optimizers.Adam(learning_rate=0.001)
         self.loss_fn = tf.keras.losses.MeanSquaredError()
     
     def train_step(self, x):
