@@ -103,6 +103,10 @@ class DiffusionModel:
         
         gradients = tape.gradient(loss, self.model.trainable_variables)
         self.optimizer.apply_gradients(zip(gradients, self.model.trainable_variables))
+        print(f"Loss: {loss.numpy()}")
+        if np.all(gradients == 0):
+            print("Warning: All gradients are zero.")
+
         return loss
 
     def train(self, dataloader, epochs):
@@ -133,7 +137,7 @@ def display_samples(samples):
 
 # 3. Train the Model
 diffusion_model = DiffusionModel(unet)
-epochs = 100  # Number of training epochs
+epochs = 10  # Number of training epochs
 diffusion_model.train(train_gen, epochs)
 
 # 4. Evaluate and Save the Model

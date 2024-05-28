@@ -23,7 +23,6 @@ BATCH_SIZE = 4  # for training batch size
 timesteps = 16    # how many steps for a noisy image into clear
 time_bar = 1 - np.linspace(0, 1.0, timesteps + 1) # linspace for timesteps
 
-#!TODO: delete mn500, n500, m500 as they are all synthetic images created via GAN. Use half of HAM 10000 dataset as training
 def cvtImg(img):
     img = img - img.min()
     img = (img / img.max())
@@ -183,6 +182,6 @@ for _ in range(10):
     # show result 
     predict()
     predict_step()
-    plt.show()
+    #plt.show()
 
 model.save('gen.h5')
