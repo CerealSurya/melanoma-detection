@@ -137,22 +137,13 @@ class DiffusionModel:
             samples.append(x)
         return samples
 
-def display_samples(samples):
-    num_samples = len(samples)
-    plt.figure(figsize=(15, 15))
-    for i, sample in enumerate(samples):
-        plt.subplot(1, num_samples, i + 1)
-        plt.imshow(tf.squeeze(sample).numpy())
-        plt.axis('off')
-    plt.show()
-
 # 3. Train the Model
 diffusion_model = DiffusionModel(unet)
-epochs = 1  # Number of training epochs
+epochs = 10  # Number of training epochs
 diffusion_model.train(dataset, epochs)
 
 # 4. Evaluate and Save the Model
-unet.save('gen.h5')
+unet.save('newgen.h5')
 
 # samples = diffusion_model.sample(num_samples=5)
 # display_samples(samples)
