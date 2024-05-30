@@ -13,7 +13,7 @@ import os
 
 # Define image size and batch size
 image_size = (224, 224)
-batch_size = 8
+batch_size = 4
 
 # Create data generator for loading images
 def preprocess_image(image):
@@ -148,7 +148,7 @@ def display_samples(samples):
 
 # 3. Train the Model
 diffusion_model = DiffusionModel(unet)
-epochs = 100  # Number of training epochs
+epochs = 20  # Number of training epochs
 diffusion_model.train(dataset, epochs)
 
 # 4. Evaluate and Save the Model
