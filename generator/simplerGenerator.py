@@ -148,7 +148,7 @@ def display_samples(samples):
 
 # 3. Train the Model
 diffusion_model = DiffusionModel(unet)
-epochs = 20  # Number of training epochs
+epochs = 1  # Number of training epochs
 diffusion_model.train(dataset, epochs)
 
 # 4. Evaluate and Save the Model
