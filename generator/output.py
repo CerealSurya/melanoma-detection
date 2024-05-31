@@ -5,8 +5,13 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 import matplotlib.pyplot as plt
 import numpy as np
 import os
+import sys 
 
-model = load_model("gen.h5")
+kerasFile = sys.argv[1]
+print(f'Running evaluation on file {kerasFile}')
+model = tf.keras.models.load_model(kerasFile)
+
+model = load_model(kerasFile)
 
 # Define diffusion model parameters and training loop
 class DiffusionModel:
@@ -46,4 +51,4 @@ def save_samples(samples, output_dir):
 diffusion = DiffusionModel(model)
 
 samples = diffusion.sample(num_samples=5)
-save_samples(samples)
+save_samples(samples, "./")
