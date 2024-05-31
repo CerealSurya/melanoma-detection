@@ -121,11 +121,13 @@ class DiffusionModel:
 
         return loss
 
-    def train(self, dataloader, epochs):
+    def train(self, dataloader, epochs, checkpoint_callback):
         for epoch in range(epochs):
             for batch in dataloader:
                 loss = self.train_step(batch)
                 print(f"Epoch: {epoch+1}, Loss: {loss.numpy()}")
+                
+            checkpoint_callback.on_epoch_end(epoch, logs={'loss': loss})
     
     def sample(self, num_samples=1):
         samples = []
@@ -140,10 +142,10 @@ class DiffusionModel:
     
 #Checkpointing
 checkpoint_dir = './checkpoints'
-checkpoint_prefix = os.path.join(checkpoint_dir, "ckpt_{epoch}")
+checkpoint_prefix = os.path.join(checkpoint_dir, "ckpt_{epoch}.weights.h5")
 
 checkpoint_callback = tf.keras.callbacks.ModelCheckpoint(
-    filepath=checkpoint_prefix,
+    filepath= checkpoint_prefix,
     save_weights_only=True
 )
 
