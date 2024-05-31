@@ -4,6 +4,10 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 import matplotlib.pyplot as plt
 import numpy as np
 import os
+from tensorflow.keras.mixed_precision import experimental as mixed_precision
+
+policy = mixed_precision.Policy('mixed_float16')
+mixed_precision.set_policy(policy)
 
 
 
@@ -136,11 +140,26 @@ class DiffusionModel:
                 x = x - predicted_noise / (self.timesteps ** 0.5)
             samples.append(x)
         return samples
+    
+#Checkpointing
+checkpoint_dir = './checkpoints'
+checkpoint_prefix = os.path.join(checkpoint_dir, "ckpt_{epoch}")
+
+checkpoint_callback = tf.keras.callbacks.ModelCheckpoint(
+    filepath=checkpoint_prefix,
+    save_weights_only=True
+)
+
+# Load latest checkpoint if it exists
+latest_checkpoint = tf.train.latest_checkpoint(checkpoint_dir)
+if latest_checkpoint:
+    print(f"Restoring from checkpoint: {latest_checkpoint}")
+    unet.load_weights(latest_checkpoint)
 
 # 3. Train the Model
 diffusion_model = DiffusionModel(unet)
 epochs = 10  # Number of training epochs
-diffusion_model.train(dataset, epochs)
+diffusion_model.train(dataset, epochs, checkpoint_callback)
 
 # 4. Evaluate and Save the Model
 unet.save('newgen.h5')
