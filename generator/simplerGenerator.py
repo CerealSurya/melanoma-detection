@@ -1,14 +1,11 @@
 import tensorflow as tf
-from tensorflow.keras import layers, Model
+from tensorflow.keras import layers, Model, config
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 import matplotlib.pyplot as plt
 import numpy as np
 import os
-from tensorflow.keras.mixed_precision import experimental as mixed_precision
 
-policy = mixed_precision.Policy('mixed_float16')
-mixed_precision.set_policy(policy)
-
+config.set_dtype_policy("mixed_float16")
 
 
 #!TODO: delete mn500, n500, m500 as they are all synthetic images created via GAN. Use half of HAM 10000 dataset as training
