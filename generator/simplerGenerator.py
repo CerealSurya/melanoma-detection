@@ -128,12 +128,13 @@ class DiffusionModel:
                 loss = self.train_step(batch)
                 print(f"Epoch: {epoch+1}, Loss: {loss.numpy()}")
                 
-            checkpoint_callback.on_epoch_end(epoch, logs={'loss': loss})
             with open("onEpoch.txt", "r") as f:
                 l = f.read()
                 with open("onEpoch.txt", "w") as j:
                     epochs = str(int(l) + 1)
-                    j.write(epochs)
+                    j.write(epochs)  
+            checkpoint_callback.on_epoch_end(epoch, logs={'loss': loss})
+            
     
     def sample(self, num_samples=1):
         samples = []
