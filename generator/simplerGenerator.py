@@ -160,7 +160,7 @@ checkpoint_callback = tf.keras.callbacks.ModelCheckpoint(
 items = os.listdir(checkpoint_dir)
 if items:
     print("\n\nRunning on latest checkpoint\n\n")
-    unet.load_weight(f"{checkpoint_dir}/{items[0]}")
+    unet.load_weights(f"{checkpoint_dir}/{items[0]}")
 
 
 
