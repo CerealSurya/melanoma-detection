@@ -152,6 +152,7 @@ checkpoint_callback = tf.keras.callbacks.ModelCheckpoint(
 
 # Load latest checkpoint if it exists
 latest_checkpoint = tf.train.latest_checkpoint(checkpoint_dir)
+print(type(latest_checkpoint))
 if latest_checkpoint:
     print(f"Restoring from checkpoint: {latest_checkpoint}")
     unet.load_weights(latest_checkpoint)
