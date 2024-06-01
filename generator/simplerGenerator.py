@@ -158,7 +158,7 @@ checkpoint_callback = tf.keras.callbacks.ModelCheckpoint(
 
 # Load latest checkpoint if it exists
 items = os.listdir(checkpoint_dir)
-if not items:
+if items:
     print("\n\nRunning on latest checkpoint\n\n")
     unet.load_weight(f"{checkpoint_dir}/{items[0]}")
 
