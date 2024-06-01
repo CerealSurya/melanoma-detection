@@ -122,6 +122,7 @@ class DiffusionModel:
         return loss
 
     def train(self, dataloader, epochs, checkpoint_callback):
+        checkpoint_callback.set_model(self.model)  # Attach the model to the checkpoint callback
         for epoch in range(epochs):
             for batch in dataloader:
                 loss = self.train_step(batch)
