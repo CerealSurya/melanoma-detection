@@ -127,7 +127,7 @@ class DiffusionModel:
             for batch in dataloader:
                 loss = self.train_step(batch)
                 print(f"Epoch: {epoch+1}, Loss: {loss.numpy()}")
-                
+
             with open("onEpoch.txt", "r") as f:
                 l = f.read()
                 with open("onEpoch.txt", "w") as j:
@@ -159,6 +159,7 @@ checkpoint_callback = tf.keras.callbacks.ModelCheckpoint(
 # Load latest checkpoint if it exists
 items = os.listdir(checkpoint_dir)
 if not items:
+    print("\n\nRunning on latest checkpoint\n\n")
     unet.load_weight(f"{checkpoint_dir}/{items[0]}")
 
 
