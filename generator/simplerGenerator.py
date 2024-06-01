@@ -129,6 +129,11 @@ class DiffusionModel:
                 print(f"Epoch: {epoch+1}, Loss: {loss.numpy()}")
                 
             checkpoint_callback.on_epoch_end(epoch, logs={'loss': loss})
+            with open("onEpoch.txt", "r") as f:
+                l = f.read()
+                with open("onEpoch.txt", "w") as j:
+                    epochs = str(int(l) + 1)
+                    j.write(epochs)
     
     def sample(self, num_samples=1):
         samples = []
@@ -143,7 +148,7 @@ class DiffusionModel:
     
 #Checkpointing
 checkpoint_dir = './checkpoints'
-checkpoint_prefix = os.path.join(checkpoint_dir, "ckpt_{epoch}.weights.h5")
+checkpoint_prefix = os.path.join(checkpoint_dir, "ckpt.weights.h5")
 
 checkpoint_callback = tf.keras.callbacks.ModelCheckpoint(
     filepath= checkpoint_prefix,
@@ -151,15 +156,15 @@ checkpoint_callback = tf.keras.callbacks.ModelCheckpoint(
 )
 
 # Load latest checkpoint if it exists
-latest_checkpoint = tf.train.latest_checkpoint(checkpoint_dir)
-print(type(latest_checkpoint))
-if latest_checkpoint:
-    print(f"Restoring from checkpoint: {latest_checkpoint}")
-    unet.load_weights(latest_checkpoint)
+items = os.listdir(checkpoint_dir)
+if not items:
+    unet.load_weight(f"{checkpoint_dir}/{items[0]}")
+
+
 
 # 3. Train the Model
 diffusion_model = DiffusionModel(unet)
-epochs = 10  # Number of training epochs
+epochs = 20  # Number of training epochs
 diffusion_model.train(dataset, epochs, checkpoint_callback)
 
 # 4. Evaluate and Save the Model
