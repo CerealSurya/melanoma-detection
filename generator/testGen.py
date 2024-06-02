@@ -109,7 +109,9 @@ def build_unet():
     x = layers.Reshape((4, 4, 32))(x)
     
     # ----- right ( up ) -----
-    x = layers.Concatenate()([x, x4])
+    x_upsampled = layers.UpSampling2D(size=(7, 7))(x)  # (None, 28, 28, 32)
+
+    x = layers.Concatenate()([x_upsampled, x4])
     x = block(x, x_ts)
     x = layers.UpSampling2D(2)(x)
     
@@ -132,6 +134,7 @@ def build_unet():
 # Instantiate UNet model
 
 unet = build_unet()
+unet.compile(loss=tf.keras.losses.MeanSquaredError(), optimizer=tf.keras.optimizers.Adam(learning_rate=0.00001))
 
 # Define diffusion model parameters and training loop
 class DiffusionModel:
@@ -164,7 +167,7 @@ class DiffusionModel:
         for epoch in range(epochs):
             for batch in dataloader:
                 loss = self.train_step(batch)
-                print(f"Epoch: {epoch+1}, Loss: {loss.numpy()}")
+                print(f"Epoch: {epoch+1}, Loss: {loss}")
 
             with open("onEpoch.txt", "r") as f:
                 l = f.read()
@@ -199,7 +202,6 @@ items = os.listdir(checkpoint_dir)
 if items:
     print("\n\nRunning on latest checkpoint\n\n")
     unet.load_weights(f"{checkpoint_dir}/{items[0]}")
-
 
 
 # 3. Train the Model
