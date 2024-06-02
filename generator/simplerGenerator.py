@@ -166,7 +166,7 @@ if items:
 
 # 3. Train the Model
 diffusion_model = DiffusionModel(unet)
-epochs = 20  # Number of training epochs
+epochs = 5  # Number of training epochs
 diffusion_model.train(dataset, epochs, checkpoint_callback)
 
 # 4. Evaluate and Save the Model
