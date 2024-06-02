@@ -112,4 +112,5 @@ diffusion = DiffusionModel(unet)
 
 
 samples = diffusion.sample(num_samples=5)
+print("howdy")
 save_samples(samples, "./")
