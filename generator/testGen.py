@@ -15,7 +15,7 @@ config.set_dtype_policy("mixed_float16")
 # Define image size and batch size
 image_size = (224, 224)
 IMG_SIZE = 224
-batch_size = 4
+batch_size = 8
 timesteps = 64 #steps from noisy image to clear
 time_bar = 1 - np.linspace(0, 1.0, timesteps + 1) # linspace for timesteps
 
@@ -131,35 +131,28 @@ def build_unet():
     model = tf.keras.models.Model([x_input, x_ts_input], x)
     return model
 
+
 # Instantiate UNet model
 
 unet = build_unet()
-unet.compile(loss=tf.keras.losses.MeanSquaredError(), optimizer=tf.keras.optimizers.Adam(learning_rate=0.00001))
+optimize = tf.keras.optimizers.Adam(learning_rate=0.00001)
+unet.compile(loss=tf.keras.losses.MeanSquaredError(), optimizer=optimize)
 
 # Define diffusion model parameters and training loop
 class DiffusionModel:
-    def __init__(self, model, timesteps=64):
+    def __init__(self, model, optimizer, timesteps=64):
         self.model = model
         self.timesteps = timesteps
-        self.optimizer = tf.keras.optimizers.Adam(learning_rate=0.00001)
-        self.loss_fn = tf.keras.losses.MeanSquaredError()
+        self.optimizer = optimizer
     
     def train_step(self, x):
-        # with tf.GradientTape() as tape:
-        #     noise = tf.random.normal(shape=tf.shape(x))
-        #     noisy_images = x + noise
-        #     reconstructed_images = self.model(noisy_images, training=True)
-        #     loss = self.loss_fn(x, reconstructed_images)
-
         x_ts = generate_ts(len(x)) #Creates random timestep for each bath
         x_a, x_b = forward_noise(x, x_ts)
         loss = self.model.train_on_batch([x_a, x_ts], x_b) #Difference between this and simplerGenerator is x_b (the target, the next step in the array)
         
-        # gradients = tape.gradient(loss, self.model.trainable_variables)
-        # self.optimizer.apply_gradients(zip(gradients, self.model.trainable_variables))
-        # if np.all(gradients == 0):
-        #     print("Warning: All gradients are zero.")
-
+        gradients = tf.GradientTape().gradient(loss, self.model.trainable_variables)
+        gradients = [tf.clip_by_value(grad, -1.0, 1.0) for grad in gradients]  # Gradient clipping
+        self.optimizer.apply_gradients(zip(gradients, self.model.trainable_variables))
         return loss
 
     def train(self, dataloader, epochs, checkpoint_callback):
@@ -205,7 +198,7 @@ if items:
 
 
 # 3. Train the Model
-diffusion_model = DiffusionModel(unet)
+diffusion_model = DiffusionModel(unet, optimize)
 epochs = 20  # Number of training epochs
 diffusion_model.train(dataset, epochs, checkpoint_callback)
 
