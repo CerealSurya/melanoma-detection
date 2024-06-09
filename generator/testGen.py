@@ -42,20 +42,7 @@ dataset = file_paths.map(load_and_preprocess_image, num_parallel_calls=tf.data.e
 # Batch the dataset
 dataset = dataset.batch(batch_size).prefetch(tf.data.experimental.AUTOTUNE)
 
-def forward_noise(x, t):
-    a = time_bar[t]      # base on t
-    b = time_bar[t + 1]  # image for t + 1
-    #Creates random timesteps ^^
 
-    noise = np.random.normal(size=x.shape)  # noise mask
-    a = a.reshape((-1, 1, 1, 1))
-    b = b.reshape((-1, 1, 1, 1))
-    img_a = x * (1 - a) + noise * a
-    img_b = x * (1 - b) + noise * b
-    return img_a, img_b
-    
-def generate_ts(num):
-    return np.random.randint(0, timesteps, size=num)
 
 
 # 2. Define the Model
@@ -135,24 +122,43 @@ def build_unet():
 # Instantiate UNet model
 
 unet = build_unet()
-optimize = tf.keras.optimizers.Adam(learning_rate=0.00001)
-unet.compile(loss=tf.keras.losses.MeanSquaredError(), optimizer=optimize)
 
 # Define diffusion model parameters and training loop
 class DiffusionModel:
-    def __init__(self, model, optimizer, timesteps=64):
+    def __init__(self, model, timesteps=64):
         self.model = model
         self.timesteps = timesteps
-        self.optimizer = optimizer
+        self.optimizer = tf.keras.optimizers.Adam(learning_rate=0.00001)
+        self.loss_fn = tf.keras.losses.MeanSquaredError()
+
+    def forward_noise(self, x, t):
+        a = time_bar[t]      # base on t
+        b = time_bar[t + 1]  # image for t + 1
+        #Creates random timesteps ^^
+
+        noise = np.random.normal(size=x.shape)  # noise mask
+        a = a.reshape((-1, 1, 1, 1))
+        b = b.reshape((-1, 1, 1, 1))
+        img_a = x * (1 - a) + noise * a
+        img_b = x * (1 - b) + noise * b
+        return img_a, img_b
+    
+    def generate_ts(self, num):
+        return np.random.randint(0, timesteps, size=num)
     
     def train_step(self, x):
-        x_ts = generate_ts(len(x)) #Creates random timestep for each bath
-        x_a, x_b = forward_noise(x, x_ts)
-        loss = self.model.train_on_batch([x_a, x_ts], x_b) #Difference between this and simplerGenerator is x_b (the target, the next step in the array)
+
+        x_ts = self.generate_ts(len(x))  # Creates random timestep for each batch
+        x_a, x_b = self.forward_noise(x, x_ts)
+
+        with tf.GradientTape() as tape:
+            predictions = self.model([x_a, tf.expand_dims(x_ts, axis=-1)], training=True)
+            loss = self.loss_fn(x_b, predictions)
+
+        gradients = tape.gradient(loss, self.model.trainable_variables)
+        clipped_gradients = [tf.clip_by_value(grad, -1.0, 1.0) for grad in gradients]  # Gradient clipping
+        self.optimizer.apply_gradients(zip(clipped_gradients, self.model.trainable_variables))
         
-        gradients = tf.GradientTape().gradient(loss, self.model.trainable_variables)
-        gradients = [tf.clip_by_value(grad, -1.0, 1.0) for grad in gradients]  # Gradient clipping
-        self.optimizer.apply_gradients(zip(gradients, self.model.trainable_variables))
         return loss
 
     def train(self, dataloader, epochs, checkpoint_callback):
@@ -198,7 +204,7 @@ if items:
 
 
 # 3. Train the Model
-diffusion_model = DiffusionModel(unet, optimize)
+diffusion_model = DiffusionModel(unet)
 epochs = 20  # Number of training epochs
 diffusion_model.train(dataset, epochs, checkpoint_callback)
 
