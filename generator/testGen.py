@@ -2,6 +2,7 @@ import tensorflow as tf
 from tensorflow.keras import layers, Model, config
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 import matplotlib.pyplot as plt
+from PIL import Image
 import numpy as np
 import os
 
@@ -178,12 +179,23 @@ class DiffusionModel:
     
     def sample(self, num_samples=1):
         samples = []
-        for _ in range(num_samples):
+        for i in range(num_samples):
             x = tf.random.normal((1, 224, 224, 3))
             for t in range(self.timesteps):
                 t_batch = tf.ones((1, 1)) * t
                 predicted_noise = self.model(x, training=False)
                 x = x - predicted_noise / (self.timesteps ** 0.5)
+                # Process the tensor and save the image
+            sample = tf.clip_by_value(x, 0, 1)  # Ensure values are in the range [0, 1]
+            sample = tf.image.convert_image_dtype(sample[0], dtype=tf.uint8)  # Convert to uint8
+
+            # Convert to numpy array
+            sample_np = sample.numpy()
+
+            # Save the image using PIL
+            image = Image.fromarray(sample_np)
+            image.save(f"./Image_{i}.png")
+
             samples.append(x)
         return samples
     

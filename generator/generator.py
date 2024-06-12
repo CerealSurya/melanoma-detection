@@ -13,15 +13,35 @@ import matplotlib.pyplot as plt
 import tensorflow as tf
 from tensorflow.keras import layers
 
-(X_train, y_train), (X_test, y_test) = tf.keras.datasets.cifar10.load_data()
-X_train = X_train[y_train.squeeze() == 1]
-X_train = (X_train / 127.5) - 1.0
-
-
 IMG_SIZE = 224     # input image size, CIFAR-10 is 32x32
 BATCH_SIZE = 4  # for training batch size
 timesteps = 16    # how many steps for a noisy image into clear
 time_bar = 1 - np.linspace(0, 1.0, timesteps + 1) # linspace for timesteps
+
+# Create data generator for loading images
+def preprocess_image(image):
+    image = tf.image.resize(image, (IMG_SIZE, IMG_SIZE))  # Resize the image
+    image = image / 255.0  # Scale the image pixels to range [0, 1]
+    return image
+
+# Function to load images from a directory
+def load_and_preprocess_image(file_path):
+    image = tf.io.read_file(file_path)
+    image = tf.image.decode_jpeg(image, channels=3)
+    return preprocess_image(image)
+
+data_path = 'dataset/HAM10000_images_part_1'
+file_pattern = data_path + '/*.jpg'  # Adjust the pattern based on your image format
+file_paths = tf.data.Dataset.list_files(file_pattern)
+
+# Apply the loading and preprocessing functions
+X_train = file_paths.map(load_and_preprocess_image, num_parallel_calls=tf.data.experimental.AUTOTUNE)
+
+# Batch the dataset
+X_train = X_train.batch(BATCH_SIZE).prefetch(tf.data.experimental.AUTOTUNE)
+
+
+
 
 def cvtImg(img):
     img = img - img.min()
@@ -53,9 +73,9 @@ def generate_ts(num):
 
 # t = np.full((25,), timesteps - 1) # if you want see clarity
 # t = np.full((25,), 0)             # if you want see noisy
-t = generate_ts(25)             # random for training data
-a, b = forward_noise(X_train[:25], t)
-show_examples(a)
+#t = generate_ts(25)             # random for training data
+#a, b = forward_noise(X_train[:25], t)
+#show_examples(a)
 def block(x_img, x_ts):
     x_parameter = layers.Conv2D(128, kernel_size=3, padding='same')(x_img)
     x_parameter = layers.Activation('relu')(x_parameter)
@@ -180,8 +200,8 @@ for _ in range(10):
     model.optimizer.learning_rate = max(0.000001, model.optimizer.learning_rate * 0.9)
 
     # show result 
-    predict()
-    predict_step()
+    # predict()
+    # predict_step()
     #plt.show()
 
-model.save('gen.h5')
+model.save('gennnn.h5')
