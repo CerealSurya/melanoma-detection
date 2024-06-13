@@ -3,6 +3,7 @@ from tensorflow.keras import layers, Model, config
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 import matplotlib.pyplot as plt
 import numpy as np
+from PIL import Image
 import os
 
 config.set_dtype_policy("mixed_float16")
@@ -120,16 +121,41 @@ class DiffusionModel:
     def generate_ts(self, num):
         return np.random.randint(0, timesteps, size=num)
              
+    # def sample(self, num_samples=1):
+    #     samples = []
+    #     for i in range(num_samples):
+    #         x = tf.random.normal((1, 224, 224, 3), dtype=tf.float32)
+    #         for t in range(self.timesteps):
+    #             t_batch = tf.ones((1, 1), dtype=tf.float32) * t
+    #             predicted_noise = self.model([x, t_batch], training=False)
+    #             x = x - predicted_noise / (self.timesteps ** 0.5)
+    #         sample = tf.clip_by_value(x, 0, 1)  # Ensure values are in the range [0, 1]
+    #         sample = tf.image.convert_image_dtype(sample[0], dtype=tf.uint8)  # Convert to uint8
+
+    #         # Convert to numpy array
+    #         sample_np = sample.numpy()
+
+    #         # Save the image using PIL
+    #         image = Image.fromarray(sample_np)
+    #         image.save(f"./Image_{i}.png")
+
+    #         samples.append(x)
+    #     return samples
     def sample(self, num_samples=1):
         samples = []
         for _ in range(num_samples):
-            x = tf.random.normal((1, 224, 224, 3))
-            for t in range(self.timesteps):
-                t_batch = tf.ones((1, 1)) * t
-                predicted_noise = self.model(x, training=False)
-                x = x - predicted_noise / (self.timesteps ** 0.5)
+            x = np.random.normal(size=(32, IMG_SIZE, IMG_SIZE, 3))
+            for i in range(timesteps):
+                t = i
+                x = self.model.predict([x, np.full((32, 1), t, dtype=np.float32)], verbose=0)
+
             samples.append(x)
-        return samples
+
+        if not os.path.exists("./"):
+            os.makedirs("./")
+        for i, sample in enumerate(samples):
+            sample_path = os.path.join("./", f'sample_{i+1}.png')
+            tf.keras.preprocessing.image.save_img(sample_path, tf.squeeze(sample).numpy())
     
 checkpoint_dir = './checkpoints'
 checkpoint_prefix = os.path.join(checkpoint_dir, "ckpt.weights.h5")
