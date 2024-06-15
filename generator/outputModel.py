@@ -17,7 +17,7 @@ config.set_dtype_policy("mixed_float16")
 image_size = (224, 224)
 IMG_SIZE = 224
 batch_size = 8
-timesteps = 64 #steps from noisy image to clear
+timesteps = 128 #steps from noisy image to clear
 time_bar = 1 - np.linspace(0, 1.0, timesteps + 1) # linspace for timesteps
 
 # 2. Define the Model
@@ -143,7 +143,7 @@ class DiffusionModel:
     #     return samples
     def sample(self, num_samples=1):
         samples = []
-        for _ in range(num_samples):
+        for _ in range(1): #num_samples
             x = np.random.normal(size=(32, IMG_SIZE, IMG_SIZE, 3))
             for i in range(timesteps):
                 t = i
@@ -151,11 +151,10 @@ class DiffusionModel:
 
             samples.append(x)
 
-        if not os.path.exists("./"):
-            os.makedirs("./")
-        for i, sample in enumerate(samples):
-            sample_path = os.path.join("./", f'sample_{i+1}.png')
-            tf.keras.preprocessing.image.save_img(sample_path, tf.squeeze(sample).numpy())
+        for sample_batch in samples:
+            for j, sample in enumerate(sample_batch):
+                sample_path = os.path.join("./", f'sample_{len(samples)}_{j+1}.png')
+                tf.keras.preprocessing.image.save_img(sample_path, sample)
     
 checkpoint_dir = './checkpoints'
 checkpoint_prefix = os.path.join(checkpoint_dir, "ckpt.weights.h5")
