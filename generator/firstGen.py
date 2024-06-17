@@ -37,10 +37,10 @@ dataset = file_paths.map(load_and_preprocess_image, num_parallel_calls=tf.data.e
 
 # Batch the dataset
 dataset = dataset.batch(batch_size).prefetch(tf.data.experimental.AUTOTUNE)
-
+print(dataset)
 # 2. Define the Model
 
-def build_unet(input_shape):
+def build_unet(input_shape=(256, 256, 3)):
     inputs = layers.Input(shape=input_shape)
     
     # Encoder
@@ -65,33 +65,29 @@ def build_unet(input_shape):
     c5 = layers.Conv2D(1024, (3, 3), activation='relu', padding='same')(c5)
     
     # Decoder
-    u6 = layers.UpSampling2D((2, 2))(c5)
-    u6 = layers.Conv2D(512, (3, 3), activation='relu', padding='same')(u6)
+    u6 = layers.Conv2DTranspose(512, (2, 2), strides=(2, 2), padding='same')(c5)
     u6 = layers.concatenate([u6, c4])
     c6 = layers.Conv2D(512, (3, 3), activation='relu', padding='same')(u6)
     c6 = layers.Conv2D(512, (3, 3), activation='relu', padding='same')(c6)
     
-    u7 = layers.UpSampling2D((2, 2))(c6)
-    u7 = layers.Conv2D(256, (3, 3), activation='relu', padding='same')(u7)
+    u7 = layers.Conv2DTranspose(256, (2, 2), strides=(2, 2), padding='same')(c6)
     u7 = layers.concatenate([u7, c3])
     c7 = layers.Conv2D(256, (3, 3), activation='relu', padding='same')(u7)
     c7 = layers.Conv2D(256, (3, 3), activation='relu', padding='same')(c7)
     
-    u8 = layers.UpSampling2D((2, 2))(c7)
-    u8 = layers.Conv2D(128, (3, 3), activation='relu', padding='same')(u8)
+    u8 = layers.Conv2DTranspose(128, (2, 2), strides=(2, 2), padding='same')(c7)
     u8 = layers.concatenate([u8, c2])
     c8 = layers.Conv2D(128, (3, 3), activation='relu', padding='same')(u8)
     c8 = layers.Conv2D(128, (3, 3), activation='relu', padding='same')(c8)
     
-    u9 = layers.UpSampling2D((2, 2))(c8)
-    u9 = layers.Conv2D(64, (3, 3), activation='relu', padding='same')(u9)
-    u9 = layers.concatenate([u9, c1])
+    u9 = layers.Conv2DTranspose(64, (2, 2), strides=(2, 2), padding='same')(c8)
+    u9 = layers.concatenate([u9, c1], axis=3)
     c9 = layers.Conv2D(64, (3, 3), activation='relu', padding='same')(u9)
     c9 = layers.Conv2D(64, (3, 3), activation='relu', padding='same')(c9)
     
     outputs = layers.Conv2D(3, (1, 1), activation='sigmoid')(c9)
     
-    model = Model(inputs, outputs)
+    model = tf.keras.models.Model(inputs=[inputs], outputs=[outputs])
     return model
 
 # Instantiate UNet model
