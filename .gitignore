@@ -2,3 +2,4 @@ DDI/
 info/
 test.py
 tensorflowEnv/
+/generator/dataset
